@@ -1,0 +1,22 @@
+Menú principal (S vuelve al menú anterior en todos los menúes)
++->M: Modificar
+| +->C: Colores
+| | +->A: Agregar un color
+| | +->B: Borrar un color
+| | +->M: Modificar un color
+| +->T: Tamaños
+| | +->A: Agregar un tamaño
+| | +->B: Borrar un tamaño
+| | +->M: Modificar un tamaño
++->D: Depósitos
+| +->G: Generar depósitos con un archivo CSV
+| +->V: Ver el contenido de un depósito
++->I: Informar
+|	Objetos por depósito
+|	Objetos por color
+|	Objetos por tamaño
+|	Colores con menos objetos
+|	Tamaños con más objetos
+|	Objetos por tamaño, de mayor a menor
++->A: About
++->H: Help

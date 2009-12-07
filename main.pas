@@ -13,7 +13,7 @@ begin
 		writeln('A	Dar de alta un registro');
 		writeln('B	Dar de baja un registro');
 		writeln('M	Modificar un registro');
-		writeln('S	Atrás');
+		writeln('S	AtrÃ¡s');
 		prompt(3);
 		readln(ans);
 		case	ans of
@@ -32,8 +32,8 @@ var
 begin
 	repeat
 		writeln('C	Archivo de colores');
-		writeln('T	Archivo de tamaños');
-		writeln('S	Atrás');
+		writeln('T	Archivo de tamaÃ±os');
+		writeln('S	AtrÃ¡s');
 		prompt(2);
 		readln(ans);
 		case	ans of
@@ -66,7 +66,7 @@ begin
 			'i': informar(archc);
 			'b': ;
 			's': ;
-			else writeln('Comando inválido');
+			else writeln('Comando invÃ¡lido');
 		end;
 	until (rp = 's');
 

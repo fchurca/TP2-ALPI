@@ -1,22 +1,20 @@
 Menú principal (S vuelve al menú anterior en todos los menúes)
++->A: Actualizar los contenidos de los depósitos
++->I: Informar detalles de la actualización (correr 'Actualizar' antes)
+| +->D: Objetos por depósito
+| +->C: Objetos por color
+| +->T: Objetos por tamaño
+| +->E: Colores con menos objetos
+| +->A: Tamaños con más objetos
 +->M: Modificar
 | +->C: Colores
 | | +->A: Agregar un color
 | | +->B: Borrar un color
 | | +->M: Modificar un color
 | +->T: Tamaños
-| | +->A: Agregar un tamaño
-| | +->B: Borrar un tamaño
-| | +->M: Modificar un tamaño
-+->D: Depósitos
-| +->G: Generar depósitos con un archivo CSV
-| +->V: Ver el contenido de un depósito
-+->I: Informar
-|	Objetos por depósito
-|	Objetos por color
-|	Objetos por tamaño
-|	Colores con menos objetos
-|	Tamaños con más objetos
-|	Objetos por tamaño, de mayor a menor
-+->A: About
-+->H: Help
+|   +->A: Agregar un tamaño
+|   +->B: Borrar un tamaño
+|   +->M: Modificar un tamaño
++->D: Generar depósitos con un archivo CSV
++->A: Acerca de
++->H: Ayuda

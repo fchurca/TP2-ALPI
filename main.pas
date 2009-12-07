@@ -1,70 +1,9 @@
 program TP2;
 
-uses crt, dos;
+uses crt, dos, color, info;
 
-type
-	Tcolor = record
-		cod:word;
-		Descripcion: string [20];
-	end;
-
-	tarchcolor=file of Tcolor;
-
-procedure prompt(menulevel: integer);
-begin
-	while(menulevel > 0) do
-	begin;
-		write('>');
-		dec(menulevel);
-	end;
-end;
-
-procedure Alta(var Archivo:tarchcolor);
-var
-	reg:tcolor;
-	long:byte;
-begin
-	reset(archivo);
-	while not eof(archivo) do
-		read(Archivo,reg);
-
-	repeat
-		begin
-		writeln('Ingrese código ');
-		readln(reg.cod);
-		end;
-	until (reg.cod>0) and (reg.cod<255);
-
-	repeat
-	writeln('Ingrese descripción');
-	readln(reg.descripcion);
-	long:=length(reg.descripcion);{funcion q devuelve la longitud de un string}
-	until (long>0) and (long<21);
-
-	write(archivo,reg);
-
-end;
-
-procedure about;
-begin
-end;
-
-procedure help;
-begin
-end;
-
-procedure informar(var archivo:tarchcolor);
-var
-	reg:tcolor;
-
-begin
-	reset(archivo);
-	while not eof(archivo) do
-	begin
-		read(archivo,reg);
-		writeln(reg.cod,'	',reg.descripcion);
-	end;
-end;
+const
+	COLOURFILE = 'colores.dat';
 
 procedure operacion(var archivo:tarchcolor);
 var
@@ -111,7 +50,7 @@ var
 	y,m,d,w:word;
 
 begin
-	assign(archC,'Colores.dat');
+	assign(archC, COLOURFILE);
 	repeat
 		writeln('M	Modificar');
 		writeln('I	Informar');

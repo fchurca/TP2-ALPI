@@ -4,10 +4,46 @@ interface
 	procedure prompt(menulevel: integer);
 	procedure about;
 	procedure help;
+	function goodfile(var archivo : file) : boolean overload;
+	function goodfile(var archivo : text) : boolean overload;
 	
 implementation
 	const
 		HELPFILE = 'help';
+
+	function goodfile(var archivo : file) : boolean;
+	var
+		ret : boolean;
+	begin
+		{$I-}
+		reset(archivo);
+		{$I+}
+		if (ioresult <> 0) then
+		begin
+			writeln('Archivo no disponible');
+			ret := false;
+		end
+		else
+			ret := true;
+		goodfile := ret;
+	end;
+
+	function goodfile(var archivo : text) : boolean overload;
+	var
+		ret : boolean;
+	begin
+		{$I-}
+		reset(archivo);
+		{$I+}
+		if (ioresult <> 0) then
+		begin
+			writeln('Archivo no disponible');
+			ret := false;
+		end
+		else
+			ret := true;
+		goodfile := ret;
+	end;
 
 	procedure prompt(menulevel: integer);
 	begin
@@ -28,12 +64,7 @@ implementation
 		dump : string;
 	begin
 		assign(fhelpfile, HELPFILE);
-		{$I-}
-		reset(fhelpfile);
-		{$I+}
-		if (ioresult <> 0) then
-			writeln('Help file not available')
-		else
+		if goodfile(fhelpfile) then
 			while not eof(fhelpfile) do
 			begin
 				readln(fhelpfile, dump);

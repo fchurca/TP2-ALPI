@@ -1,60 +1,78 @@
 unit color;
 
 interface
+	uses info;
 	type
 		Tcolor = record
-			cod:word;
-			Descripcion: string [20];
+			codigo : byte;
+			Descripcion : string [20];
 		end;
-		tarchcolor=file of Tcolor;
 
-	procedure alta(var Archivo:tarchcolor);
-	procedure baja(var Archivo:tarchcolor);
-	procedure modificar(var Archivo:tarchcolor);
-	procedure informar(var archivo:tarchcolor);
+		TFcolor = file of Tcolor;
+
+	function alta(var archivo : TFcolor) : boolean overload;
+	function baja(var archivo : TFcolor) : boolean overload;
+	function modificar(var archivo : TFcolor) : boolean overload;
+	function informar(var archivo : TFcolor) : boolean overload;
 
 implementation
-	procedure alta(var Archivo:tarchcolor);
+	function alta(var archivo : TFcolor) : boolean overload;
 	var
-		reg:tcolor;
+		reg : Tcolor;
+		ret : boolean;
 	begin
-		reset(archivo);
-		while not eof(archivo) do
-			read(Archivo,reg);
+		ret := goodfile(archivo);
+		if ret then
+		begin
+			while not eof(archivo) do
+				read(archivo,reg);
 
-		repeat
-			begin
-			writeln('Ingrese código ');
-			readln(reg.cod);
-			end;
-		until reg.cod in [1..254];
+			repeat
+				begin
+				writeln('Ingrese código ');
+				readln(reg.codigo);
+				end;
+			until reg.codigo in [1..254];
 
-		writeln('Ingrese descripción');
-		readln(reg.descripcion);
-		write(archivo,reg);
+			writeln('Ingrese descripción');
+			readln(reg.descripcion);
+			write(archivo,reg);
+			ret := true;
+		end;
+		alta := ret;
 	end;
 
-	procedure baja(var Archivo:tarchcolor);
+	function baja(var archivo : TFcolor) : boolean overload;
+	var
+		ret : boolean;
 	begin
 		writeln('Dummy function for colour entry deletion');
+		ret := goodfile(archivo);
+		baja := ret;
 	end;
 
-	procedure modificar(var Archivo:tarchcolor);
+	function modificar(var archivo : TFcolor) : boolean overload;
+	var
+		ret : boolean;
 	begin
 		writeln('Dummy function for colour entry modification');
+		ret := goodfile(archivo);
+		modificar := ret;
 	end;
 
-	procedure informar(var archivo:tarchcolor);
+	function informar(var archivo : TFcolor) : boolean overload;
 	var
-		reg:tcolor;
-
+		reg : Tcolor;
+		ret : boolean;
 	begin
-		reset(archivo);
-		while not eof(archivo) do
-		begin
-			read(archivo,reg);
-			writeln(reg.cod,'	',reg.descripcion);
-		end;
+		ret := goodfile(archivo);
+		if ret then
+			while not eof(archivo) do
+			begin
+				read(archivo, reg);
+				writeln(reg.codigo, '	', reg.descripcion);
+			end;
+		informar := ret;
 	end;
 end.
 

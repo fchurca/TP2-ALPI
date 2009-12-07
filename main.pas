@@ -1,11 +1,11 @@
 program TP2;
 
-uses crt, dos, color, info;
+uses crt, dos, info, color, tamano, objeto;
 
 const
 	COLOURFILE = 'colores.dat';
 
-procedure operacion(var archivo:tarchcolor);
+procedure Coperacion(var archivo : TFcolor);
 var
 	ans:char;
 begin
@@ -18,15 +18,16 @@ begin
 		readln(ans);
 		case	ans of
 			'a': alta(archivo);
-			'b': ;
-			'm': ;
+			'b': baja(archivo);
+			'm': modificar(archivo);
+			'i': informar(archivo);
 			's': ;
 		end;
 	until (ans='s');
 	end;
 
 
-procedure modificar(var archivocolores:tarchcolor);
+procedure modificar(var archivocolores:TFcolor);
 var
 	ans:char;
 begin
@@ -37,8 +38,9 @@ begin
 		prompt(2);
 		readln(ans);
 		case	ans of
-			'c': Operacion(archivocolores);
+			'c': Coperacion(archivocolores);
 			't': ;
+	{idea: manage(sfile); manage(cfile) overloads in units}
 			's': ;
 		end;
 	until (ans='s');
@@ -46,7 +48,7 @@ end;
 
 var
 	rp: char;
-	archC:Tarchcolor;
+	archC:TFcolor;
 	y,m,d,w:word;
 
 begin
@@ -62,7 +64,7 @@ begin
 		case	rp of
 			'h': help;
 			'a': about;
-			'm': Modificar(archC);
+			'm': modificar(archC);
 			'i': informar(archc);
 			'b': ;
 			's': ;

@@ -6,15 +6,22 @@ Menú principal (S vuelve al menú anterior en todos los menúes)
 | +->T: Objetos por tamaño
 | +->E: Colores con menos objetos
 | +->A: Tamaños con más objetos
-+->M: Modificar
++->M: Modificaciones
+| +->O: Objetos
+| | +->A: Agregar un objeto
+| | +->B: Borrar un objeto
+| | +->M: Modificar un objeto
+| | +->V: Ver objetos
 | +->C: Colores
 | | +->A: Agregar un color
 | | +->B: Borrar un color
 | | +->M: Modificar un color
+| | +->V: Ver colores
 | +->T: Tamaños
-|   +->A: Agregar un tamaño
-|   +->B: Borrar un tamaño
-|   +->M: Modificar un tamaño
-+->D: Generar depósitos con un archivo CSV
+| | +->A: Agregar un tamaño
+| | +->B: Borrar un tamaño
+| | +->M: Modificar un tamaño
+| | +->V: Ver tamaños
+| +->D: Generar criterios para los depósitos con un archivo CSV
 +->A: Acerca de
 +->H: Ayuda

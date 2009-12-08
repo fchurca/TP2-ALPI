@@ -10,6 +10,7 @@ procedure modificar(var archivo:FTcolor; var parent : Rmenu);
 	procedure Coperacion(var parent : Rmenu);
 	var
 		this : Rmenu;
+		ret : boolean;
 		ans:char;
 	begin
 		initmenu(parent, this, 'Colores');
@@ -17,13 +18,13 @@ procedure modificar(var archivo:FTcolor; var parent : Rmenu);
 			vprompt(this);
 			readln(ans);
 			case	ans of
-				'a': altaFTcolor(archivo);
-				'b': bajaFTcolor(archivo);
-				'm': modificarFTcolor(archivo);
-				'v': informarFTcolor(archivo);
+				'a': ret := altaFTcolor(archivo);
+				'b': ret := bajaFTcolor(archivo);
+				'm': ret := modificarFTcolor(archivo);
+				'v': ret := informarFTcolor(archivo);
 				's': ;
 			end;
-			if ans = 'v' then pause;
+			if not ret or (ans = 'v') then pause;
 		until (ans='s');
 	end;
 var

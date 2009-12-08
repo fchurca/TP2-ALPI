@@ -10,13 +10,21 @@ interface
 		FTcolor = file of Tcolor;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
-	function altaFTcolor(var archivo : FTcolor) : boolean overload;
-	function bajaFTcolor(var archivo : FTcolor) : boolean overload;
-	function modificarFTcolor(var archivo : FTcolor) : boolean overload;
-	function informarFTcolor(var archivo : FTcolor) : boolean overload;
+	function validCdesc(desc:string):boolean;
+
+	function altaFTcolor(var archivo : FTcolor) : boolean;
+	function bajaFTcolor(var archivo : FTcolor) : boolean;
+	function modificarFTcolor(var archivo : FTcolor) : boolean;
+	function informarFTcolor(var archivo : FTcolor) : boolean;
 
 implementation
 	uses info;
+
+	function validCdesc(desc:string):boolean;
+	begin
+		if length(desc) in [1..20] then validCdesc := true
+		else validCdesc := false;
+	end;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	var
@@ -37,7 +45,7 @@ implementation
 		goodFTcolor := ret;
 	end;
 
-	function altaFTcolor(var archivo : FTcolor) : boolean overload;
+	function altaFTcolor(var archivo : FTcolor) : boolean;
 	var
 		reg : Tcolor; codigo : byte;
 		ret : boolean;
@@ -52,8 +60,12 @@ implementation
 				end;
 			until codigo in [1..254];
 
-			while not (eof(archivo) or (codigo = reg.codigo))  do
-				read(archivo,reg);
+			if not eof(archivo) then
+			begin
+				read(archivo, reg);
+				while not (eof(archivo) or (codigo = reg.codigo))  do
+					read(archivo,reg);
+			end;
 
 			if codigo = reg.codigo then
 			begin
@@ -72,7 +84,7 @@ implementation
 		altaFTcolor := ret;
 	end;
 
-	function bajaFTcolor(var archivo : FTcolor) : boolean overload;
+	function bajaFTcolor(var archivo : FTcolor) : boolean;
 	var
 		ret : boolean;
 	begin
@@ -81,17 +93,47 @@ implementation
 		bajaFTcolor := ret;
 	end;
 
-	function modificarFTcolor(var archivo : FTcolor) : boolean overload;
+	function modificarFTcolor(var archivo : FTcolor) : boolean;
 	var
-		reg : Tcolor;
-		ret : boolean;
-		pos : integer;
+		cod : byte;
+		pos : byte;
+		reg : tcolor;
+		desc : string;
+		encontrado:boolean;
 	begin
-		ret := goodFTcolor(archivo);
-		modificarFTcolor := ret;
+		encontrado := goodFTcolor(archivo);
+		if encontrado then
+		begin
+			writeln('Ingrese codigo');
+			readln(cod);
+			encontrado := false;
+			pos := 0;
+			while not (encontrado or eof(archivo)) do
+			begin
+				read(archivo,reg);
+				inc(pos);
+				if ((reg.codigo) = cod) then
+					encontrado:=true;
+			end;
+			reset(archivo);
+			while pos > 1 do
+			begin
+				read(archivo,reg);
+				dec(pos);
+			end;
+			writeln('Descripción previa:');
+			writeln(reg.descripcion);
+			repeat
+				writeln('Ingrese la nueva descripción');
+				readln(desc);
+			until validCdesc(desc);
+			reg.descripcion := desc;
+			write(archivo,reg);
+		end;
+		modificarFTcolor := encontrado;
 	end;
 
-	function informarFTcolor(var archivo : FTcolor) : boolean overload;
+	function informarFTcolor(var archivo : FTcolor) : boolean;
 	var
 		reg : Tcolor;
 		ret : boolean;
@@ -100,16 +142,15 @@ implementation
 		if ret then
 		begin
 			if not eof(archivo) then
-				writeln('Codigo	Descripción');
+				writeln('Codigo | Descripción');
 			while not eof(archivo) do
 			begin
 				read(archivo, reg);
-				writeln(reg.codigo, '	', reg.descripcion);
+				writeln(reg.codigo:3, '    | ', reg.descripcion);
 			end
 		end
 		else writeln('Archivo no disponible');
 		informarFTcolor := ret;
-		pause;
 	end;
 end.
 

@@ -1,16 +1,18 @@
 unit menu;
 
 interface
+
 	const
-		HSEP = '/';
-		EMPTY = '';
-		PROMPT = ':';
-		MANFILE = 'manfile';
-{ Messages }
-		MAN_NOFILE = 'Archivo de manual no disponible';
-		MAN_EMPTYFILE = 'Archivo de manual vacío';
-		MAN_NOENTRY = 'No hay entrada de manual para ';
-		MAN_EMPTYENTRY = 'Entrada de manual vacía para ';
+	{ Messages }
+		MAN_NOFILE	= 'Archivo de manual no disponible';
+		MAN_EMPTYFILE	= 'Archivo de manual vacío';
+		MAN_NOENTRY	= 'No hay entrada de manual para ';
+		MAN_EMPTYENTRY	= 'Entrada de manual vacía para ';
+
+		EMPTY	= '';
+		HSEP	= '/';
+		PROMPT	= ':';
+		MANFILE	 = 'manfile';
 
 	type
 		Rmenu = record
@@ -28,7 +30,6 @@ interface
 
 implementation
 	uses crt, info;
-
 {
 Read The Fabulous Manual!
 Format:
@@ -72,27 +73,26 @@ Actually, fun can be anything, not just a function.
 						found := true;
 					{ If we have more than just a header, we have fun }
 						if not eof(doc) then
-						begin
 							readln(doc,dump);
-							if dump <> terminator then
-							begin
-								{ Help with using fun }
-								repeat
-									writeln(dump);
-									readln(doc, dump);
-								until eof(doc) or (dump = terminator)
-							end
-							else writeln(MAN_EMPTYENTRY, fun);
+						if (dump <> terminator) and not eof(doc) then
+						begin
+							{ Help with using fun }
+							repeat
+								writeln(dump);
+								readln(doc, dump);
+							until eof(doc) or (dump = terminator)
 						end
+					{ We found empty fun }
 						else writeln(MAN_EMPTYENTRY, fun);
 					end;
 				end;
-				close(doc);
 				{ We didn't find fun }
 				if not found then writeln(MAN_NOENTRY, fun);
 			end
 			{ Empty manfile }
-			else writeln(MAN_EMPTYFILE)
+			else writeln(MAN_EMPTYFILE);
+			{ Close open good manfile }
+			close(doc);
 		end
 		{ No manfile }
 		else writeln(MAN_NOFILE);

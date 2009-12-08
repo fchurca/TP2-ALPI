@@ -1,17 +1,17 @@
 unit info;
 
 interface
-	procedure prompt(menulevel: integer);
-	procedure about;
 	procedure help;
-	function goodfile(var archivo : file) : boolean overload;
-	function goodfile(var archivo : text) : boolean overload;
+	procedure pause;
+	function goodtext(var archivo : text) : boolean;
 	
 implementation
+	uses crt;
+
 	const
 		HELPFILE = 'help';
 
-	function goodfile(var archivo : file) : boolean;
+	function goodtext(var archivo : text) : boolean;
 	var
 		ret : boolean;
 	begin
@@ -25,37 +25,13 @@ implementation
 		end
 		else
 			ret := true;
-		goodfile := ret;
+		goodtext := ret;
 	end;
 
-	function goodfile(var archivo : text) : boolean overload;
-	var
-		ret : boolean;
+	procedure pause;
 	begin
-		{$I-}
-		reset(archivo);
-		{$I+}
-		if (ioresult <> 0) then
-		begin
-			writeln('Archivo no disponible');
-			ret := false;
-		end
-		else
-			ret := true;
-		goodfile := ret;
-	end;
-
-	procedure prompt(menulevel: integer);
-	begin
-		while(menulevel > 0) do
-		begin;
-			write('>');
-			dec(menulevel);
-		end;
-	end;
-
-	procedure about;
-	begin
+		writeln('Presione una tecla para continuar...');
+		readkey;
 	end;
 
 	procedure help;
@@ -64,7 +40,7 @@ implementation
 		dump : string;
 	begin
 		assign(fhelpfile, HELPFILE);
-		if goodfile(fhelpfile) then
+		if goodtext(fhelpfile) then
 			while not eof(fhelpfile) do
 			begin
 				readln(fhelpfile, dump);

@@ -1,78 +1,115 @@
 unit color;
 
 interface
-	uses info;
 	type
 		Tcolor = record
 			codigo : byte;
 			Descripcion : string [20];
 		end;
 
-		TFcolor = file of Tcolor;
+		FTcolor = file of Tcolor;
 
-	function alta(var archivo : TFcolor) : boolean overload;
-	function baja(var archivo : TFcolor) : boolean overload;
-	function modificar(var archivo : TFcolor) : boolean overload;
-	function informar(var archivo : TFcolor) : boolean overload;
+	function goodFTcolor(var archivo : FTcolor) : boolean;
+	function altaFTcolor(var archivo : FTcolor) : boolean overload;
+	function bajaFTcolor(var archivo : FTcolor) : boolean overload;
+	function modificarFTcolor(var archivo : FTcolor) : boolean overload;
+	function informarFTcolor(var archivo : FTcolor) : boolean overload;
 
 implementation
-	function alta(var archivo : TFcolor) : boolean overload;
+	uses info;
+
+	function goodFTcolor(var archivo : FTcolor) : boolean;
 	var
-		reg : Tcolor;
 		ret : boolean;
 	begin
-		ret := goodfile(archivo);
+		ret := true;
+		{$I-}
+		reset(archivo);
+		{$I+}
+		if (ioresult <> 0) then
+		begin
+			{$I-}
+			rewrite(archivo);
+			{$I+}
+			if (ioresult <> 0) then
+				ret := false;
+		end;
+		goodFTcolor := ret;
+	end;
+
+	function altaFTcolor(var archivo : FTcolor) : boolean overload;
+	var
+		reg : Tcolor; codigo : byte;
+		ret : boolean;
+	begin
+		ret := goodFTcolor(archivo);
 		if ret then
 		begin
-			while not eof(archivo) do
-				read(archivo,reg);
-
 			repeat
 				begin
 				writeln('Ingrese código ');
-				readln(reg.codigo);
+				readln(codigo);
 				end;
-			until reg.codigo in [1..254];
+			until codigo in [1..254];
 
-			writeln('Ingrese descripción');
-			readln(reg.descripcion);
-			write(archivo,reg);
-			ret := true;
-		end;
-		alta := ret;
+			while not (eof(archivo) or (codigo = reg.codigo))  do
+				read(archivo,reg);
+
+			if codigo = reg.codigo then
+			begin
+				writeln('Ya existe. Tal vez quiere modificarlo.');
+				ret := false;
+			end
+			else
+			begin
+				reg.codigo := codigo;
+				writeln('Ingrese descripción');
+				readln(reg.descripcion);
+				write(archivo,reg);
+			end;
+		end
+		else writeln('Archivo no disponible');
+		altaFTcolor := ret;
 	end;
 
-	function baja(var archivo : TFcolor) : boolean overload;
+	function bajaFTcolor(var archivo : FTcolor) : boolean overload;
 	var
 		ret : boolean;
 	begin
 		writeln('Dummy function for colour entry deletion');
-		ret := goodfile(archivo);
-		baja := ret;
+		ret := goodFTcolor(archivo);
+		bajaFTcolor := ret;
 	end;
 
-	function modificar(var archivo : TFcolor) : boolean overload;
+	function modificarFTcolor(var archivo : FTcolor) : boolean overload;
 	var
+		reg : Tcolor;
 		ret : boolean;
+		pos : integer;
 	begin
-		writeln('Dummy function for colour entry modification');
-		ret := goodfile(archivo);
-		modificar := ret;
+		ret := goodFTcolor(archivo);
+		modificarFTcolor := ret;
 	end;
 
-	function informar(var archivo : TFcolor) : boolean overload;
+	function informarFTcolor(var archivo : FTcolor) : boolean overload;
 	var
 		reg : Tcolor;
 		ret : boolean;
 	begin
-		ret := goodfile(archivo);
+		ret := goodFTcolor(archivo);
 		if ret then
+		begin
+			if not eof(archivo) then
+				writeln('Codigo	Descripción');
 			while not eof(archivo) do
 			begin
 				read(archivo, reg);
 				writeln(reg.codigo, '	', reg.descripcion);
-			end;
-		informar := ret;
+			end
+		end
+		else writeln('Archivo no disponible');
+		informarFTcolor := ret;
+		pause;
 	end;
 end.
 

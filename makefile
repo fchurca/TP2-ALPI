@@ -1,6 +1,6 @@
 .PHONY: clean
 
-all: main.o info.o color.o tamano.o objeto.o
+all: main.o info.o menu.o color.o tamano.o objeto.o
 
 main.o: main.pas
 	fpc $?
@@ -24,4 +24,4 @@ debug: all
 	./main
 
 clean:
-	make tidy; rm main
+	make tidy; rm main *~

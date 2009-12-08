@@ -6,6 +6,11 @@ interface
 		EMPTY = '';
 		PROMPT = ':';
 		MANFILE = 'manfile';
+{ Messages }
+		MAN_NOFILE = 'Archivo de manual no disponible';
+		MAN_EMPTYFILE = 'Archivo de manual vacío';
+		MAN_NOENTRY = 'No hay entrada de manual para ';
+		MAN_EMPTYENTRY = 'Entrada de manual vacía para ';
 
 	type
 		Rmenu = record
@@ -19,6 +24,7 @@ interface
 	procedure inheritmenu(var parent, child : Rmenu);
 	procedure initmenu(var parent, child : Rmenu; name : string);
 	procedure promptmenu(var menu : Rmenu);
+	procedure vprompt(var menu : Rmenu);
 
 implementation
 	uses crt, info;
@@ -27,7 +33,7 @@ implementation
 Read The Fabulous Manual!
 Format:
 	<terminator>
-	<fun1>
+	fun1
 		help
 		contents
 		can
@@ -35,7 +41,7 @@ Format:
 		several
 		lines
 	<terminator>
-	<fun2>
+	fun2
 	...
 	<terminator> // optional at end of file
 Actually, fun can be anything, not just a function.
@@ -50,31 +56,46 @@ Actually, fun can be anything, not just a function.
 		found := false;
 	{ Need a readable non-empty manual }
 		assign(doc, MANFILE);
-		if goodtext(doc) and not eof(doc) then
+		if goodtext(doc)then
 		begin
-		{ Recognize terminator }
-			readln(doc, terminator);
-		{ Find fun }
-			while not (eof(doc) or found) do
+			if not eof(doc) then
 			begin
-			{ Do we have fun? }
-				read(dump);
-				if fun = dump then
+			{ Recognize terminator }
+				readln(doc, terminator);
+			{ Find fun }
+				while not (eof(doc) or found) do
 				begin
-				{ If we have more than just a header, we have fun }
-					if not eof then found := true;
-					{ Help with using fun }
-					while not (eof(doc) or (dump = terminator)) do
+				{ Do we have fun? }
+					readln(doc, dump);
+					if fun = dump then
 					begin
-						readln(doc, dump);
-						writeln(dump);
+						found := true;
+					{ If we have more than just a header, we have fun }
+						if not eof(doc) then
+						begin
+							readln(doc,dump);
+							if dump <> terminator then
+							begin
+								{ Help with using fun }
+								repeat
+									writeln(dump);
+									readln(doc, dump);
+								until eof(doc) or (dump = terminator)
+							end
+							else writeln(MAN_EMPTYENTRY, fun);
+						end
+						else writeln(MAN_EMPTYENTRY, fun);
 					end;
 				end;
-			end;
-		end;
-		{ We didn't find fun }
-		if not found then
-			writeln('No hay entrada de manual para ', fun);
+				close(doc);
+				{ We didn't find fun }
+				if not found then writeln(MAN_NOENTRY, fun);
+			end
+			{ Empty manfile }
+			else writeln(MAN_EMPTYFILE)
+		end
+		{ No manfile }
+		else writeln(MAN_NOFILE);
 	end;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
@@ -102,6 +123,13 @@ Actually, fun can be anything, not just a function.
 	begin
 		clrscr;
 		writeln(menu.owner);
-		writeln(menu.fullname + PROMPT);
+		writeln(menu.fullname);
+	end;
+
+	procedure vprompt(var menu : Rmenu);
+	begin
+		promptmenu(menu);
+		RTFM(menu.name);
+		write(PROMPT);
 	end;
 end.

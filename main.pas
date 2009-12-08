@@ -1,76 +1,69 @@
 program TP2;
 
-uses crt, dos, info, color, tamano, objeto;
+uses crt, dos, info, menu, color{, tamano, objeto};
 
 const
 	COLOURFILE = 'colores.dat';
+	PROGNAME = 'TP2 Grupo 4';
 
-procedure Coperacion(var archivo : TFcolor);
-var
-	ans:char;
-begin
-	repeat
-		writeln('A	Dar de alta un registro');
-		writeln('B	Dar de baja un registro');
-		writeln('M	Modificar un registro');
-		writeln('S	Atrás');
-		prompt(3);
-		readln(ans);
-		case	ans of
-			'a': alta(archivo);
-			'b': baja(archivo);
-			'm': modificar(archivo);
-			'i': informar(archivo);
-			's': ;
-		end;
-	until (ans='s');
+procedure modificar(var archivo:FTcolor; var parent : Rmenu);
+	procedure Coperacion(var parent : Rmenu);
+	var
+		this : Rmenu;
+		ans:char;
+	begin
+		initmenu(parent, this, 'Colores');
+		repeat
+			vprompt(this);
+			readln(ans);
+			case	ans of
+				'a': altaFTcolor(archivo);
+				'b': bajaFTcolor(archivo);
+				'm': modificarFTcolor(archivo);
+				'v': informarFTcolor(archivo);
+				's': ;
+			end;
+			if ans = 'v' then pause;
+		until (ans='s');
 	end;
-
-
-procedure modificar(var archivocolores:TFcolor);
 var
+	this : Rmenu;
 	ans:char;
 begin
+	initmenu(parent, this, 'Modificar');
 	repeat
-		writeln('C	Archivo de colores');
-		writeln('T	Archivo de tamaños');
-		writeln('S	Atrás');
-		prompt(2);
+		vprompt(this);
 		readln(ans);
 		case	ans of
-			'c': Coperacion(archivocolores);
+			'o': ;
+			'c': Coperacion(this);
 			't': ;
-	{idea: manage(sfile); manage(cfile) overloads in units}
 			's': ;
 		end;
 	until (ans='s');
 end;
 
 var
-	rp: char;
-	archC:TFcolor;
+	ans: char;
+	archC:FTcolor;
 	y,m,d,w:word;
-
+	this : Rmenu;
 begin
+	initrootmenu(this, PROGNAME, 'Principal');
 	assign(archC, COLOURFILE);
+	clrscr;
+	help;
+	pause;
 	repeat
-		writeln('M	Modificar');
-		writeln('I	Informar');
-		writeln('A	About');
-		writeln('H	Help');
-		writeln('S	Salir');
-		prompt(1);
-		readln(rp);
-		case	rp of
-			'h': help;
-			'a': about;
-			'm': modificar(archC);
-			'i': informar(archc);
-			'b': ;
+		vprompt(this);
+		readln(ans);
+		case	ans of
+			'm': modificar(archC, this);
+{			'i': informar(archc);}
 			's': ;
 			else writeln('Comando inválido');
 		end;
-	until (rp = 's');
+	until (ans = 's');
 
 	getdate(y,m,d,w);
 	writeln('date: ',y,'-',m,'-',d,':',w);

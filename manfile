@@ -1,0 +1,22 @@
+<>
+Principal
+(X)a	Actualizar los contenidos de los depósitos
+(X)i	Informar detalles de la actualización (correr 'Actualizar' antes)
+m	Modificar archivos de datos
+s	Salir
+<>
+Modificar
+(X)o	Modificar archivo de objetos
+c	Modificar archivo de colores
+(X)t	Modificar archivo de tamaños
+(X)d	Generar criterios para los depósitos en base a un archivo CSV
+s	Atrás
+<>
+Colores
+(X)m	Modificar la descripción de un color
+a	Agregar un color
+(X)b	Borrar un color
+v	Ver colores
+s	Atrás
+<>
+

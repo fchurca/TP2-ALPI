@@ -133,7 +133,7 @@ implementation
 			end;
 			close(archivo);
 		end;
-			
+		bajaFTcolor := ret;
 	end;
 
 	function modificarFTcolor(var archivo : FTcolor) : boolean;

@@ -1,17 +1,17 @@
 unit color;
 
 interface
+	const CDESCLEN = 20;
 	type
 		Tcolor = record
 			codigo : byte;
-			Descripcion : string [20];
+			Descripcion : string [CDESCLEN];
 		end;
 
 		FTcolor = file of Tcolor;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
-	function validCdesc(desc:string):boolean;
 
 	function altaFTcolor(var archivo : FTcolor) : boolean;
 	function bajaFTcolor(var archivo : FTcolor) : boolean;
@@ -20,12 +20,6 @@ interface
 
 implementation
 	uses info;
-
-	function validCdesc(desc:string):boolean;
-	begin
-		if length(desc) in [1..20] then validCdesc := true
-		else validCdesc := false;
-	end;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	var
@@ -59,6 +53,7 @@ implementation
 	function altaFTcolor(var archivo : FTcolor) : boolean;
 	var
 		reg : Tcolor; codigo : byte;
+		desc : string;
 		ret : boolean;
 	begin
 		ret := ensuregoodFTcolor(archivo);
@@ -86,8 +81,11 @@ implementation
 			else
 			begin
 				reg.codigo := codigo;
-				writeln('Ingrese descripción');
-				readln(reg.descripcion);
+				repeat
+					writeln('Ingrese descripción');
+					readln(desc);
+				until length(desc) <= CDESCLEN;
+				reg.descripcion := desc;
 				write(archivo,reg);
 			end;
 		end
@@ -140,7 +138,7 @@ implementation
 	function modificarFTcolor(var archivo : FTcolor) : boolean;
 	var
 		cod : byte;
-		pos : byte;
+		pos : integer;
 		reg : tcolor;
 		desc : string;
 		encontrado:boolean;
@@ -170,7 +168,7 @@ implementation
 			repeat
 				writeln('Ingrese la nueva descripción');
 				readln(desc);
-			until validCdesc(desc);
+			until length(desc) <= CDESCLEN;
 			reg.descripcion := desc;
 			write(archivo,reg);
 		end;

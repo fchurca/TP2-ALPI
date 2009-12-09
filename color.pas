@@ -2,6 +2,7 @@ unit color;
 
 interface
 	const CDESCLEN = 20;
+
 	type
 		Tcolor = record
 			codigo : byte;

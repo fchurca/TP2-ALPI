@@ -18,13 +18,13 @@ procedure modificar(var archivo:FTcolor; var parent : Rmenu);
 			vprompt(this);
 			readln(ans);
 			case	ans of
-				'a': ret := altaFTcolor(archivo);
-				'b': ret := bajaFTcolor(archivo);
-				'm': ret := modificarFTcolor(archivo);
-				'v': ret := informarFTcolor(archivo);
-				's': ret := true;
+				'a': altaFTcolor(archivo);
+				'b': bajaFTcolor(archivo);
+				'm': modificarFTcolor(archivo);
+				'v': informarFTcolor(archivo);
+				's': ;
 			end;
-			if not ret or (ans = 'v') then pause;
+			if not (ans = 's') then pause;
 		until (ans='s');
 	end;
 var

@@ -138,9 +138,8 @@ implementation
 
 	function modificarFTcolor(var archivo : FTcolor) : boolean;
 	var
-		cod : byte;
 		pos : integer;
-		reg : tcolor;
+		reg, aux : tcolor;
 		desc : string;
 		encontrado:boolean;
 	begin
@@ -148,15 +147,18 @@ implementation
 		if encontrado then
 		begin
 			writeln('Ingrese el código del color a modificar');
-			readbyte(cod);
+			readbyte(aux.codigo);
 			encontrado := false;
 			pos := 0;
 			while not (encontrado or eof(archivo)) do
 			begin
 				read(archivo,reg);
 				inc(pos);
-				if ((reg.codigo) = cod) then
+				if ((reg.codigo) = aux.codigo) then
+				begin
 					encontrado:=true;
+					aux.descripcion := reg.descripcion;
+				end;
 			end;
 			reset(archivo);
 			while pos > 1 do
@@ -165,13 +167,13 @@ implementation
 				dec(pos);
 			end;
 			writeln('Descripción previa:');
-			writeln(reg.descripcion);
+			writeln(aux.descripcion);
 			repeat
 				writeln('Ingrese la nueva descripción');
 				readln(desc);
 			until length(desc) <= CDESCLEN;
-			reg.descripcion := desc;
-			write(archivo,reg);
+			aux.descripcion := desc;
+			write(archivo, aux);
 		end;
 		modificarFTcolor := encontrado;
 	end;

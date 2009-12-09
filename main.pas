@@ -3,14 +3,12 @@ program TP2;
 uses crt, dos, info, menu, color{, tamano, objeto};
 
 const
-	COLOURFILE = 'colores.dat';
 	PROGNAME = 'TP2 Grupo 4';
 
 procedure modificar(var archivo:FTcolor; var parent : Rmenu);
 	procedure Coperacion(var parent : Rmenu);
 	var
 		this : Rmenu;
-		ret : boolean;
 		ans:char;
 	begin
 		initmenu(parent, this, 'Colores');
@@ -60,7 +58,8 @@ begin
 		readln(ans);
 		case	ans of
 			'm': modificar(archC, this);
-{			'i': informar(archc);}
+{			'i': informar(archc);
+			'a': actualizar;}
 			's': ;
 			else writeln('Comando inválido');
 		end;

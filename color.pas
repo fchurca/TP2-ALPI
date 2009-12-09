@@ -1,7 +1,9 @@
 unit color;
 
 interface
-	const CDESCLEN = 20;
+	const
+		CDESCLEN = 20;
+		COLOURFILE = 'colores.dat';
 
 	type
 		Tcolor = record
@@ -65,29 +67,29 @@ implementation
 				writeln('Ingrese código ');
 				readbyte(codigo);
 				end;
-			until codigo in [1..254];
+			until codigo in [0..254];
 
-			if not eof(archivo) then
+			if not eof(archivo) and (codigo < 255)  then
 			begin
 				read(archivo, reg);
 				while not (eof(archivo) or (codigo = reg.codigo))  do
 					read(archivo,reg);
-			end;
 
-			if codigo = reg.codigo then
-			begin
-				writeln('Ya existe (', reg.descripcion, ')');
-				ret := false;
-			end
-			else
-			begin
-				reg.codigo := codigo;
-				repeat
-					writeln('Ingrese descripción');
-					readln(desc);
-				until length(desc) <= CDESCLEN;
-				reg.descripcion := desc;
-				write(archivo,reg);
+				if codigo = reg.codigo then
+				begin
+					writeln('Ya existe (', reg.descripcion, ')');
+					ret := false;
+				end
+				else
+				begin
+					reg.codigo := codigo;
+					repeat
+						writeln('Ingrese descripción');
+						readln(desc);
+					until length(desc) <= CDESCLEN;
+					reg.descripcion := desc;
+					write(archivo,reg);
+				end;
 			end;
 		end
 		else writeln(NO_FILE);
@@ -121,24 +123,19 @@ implementation
 					else
 						writeln(reg.descripcion);
 				end;
-				reset(archaux);
-				rewrite(archivo);
-				while not eof(archaux) do
-				begin
-					read(archaux,reg);
-					write(archivo,reg);
-				end;
 				close(archaux);
-				erase(archaux);
-			end;
-			close(archivo);
+				close(archivo);
+				erase(archivo);
+				rename(archaux, COLOURFILE);
+			end
+			else close(archivo);
 		end;
 		bajaFTcolor := ret;
 	end;
 
 	function modificarFTcolor(var archivo : FTcolor) : boolean;
 	var
-		pos : integer;
+		pos : word;
 		reg, aux : tcolor;
 		desc : string;
 		encontrado:boolean;
@@ -160,12 +157,13 @@ implementation
 					aux.descripcion := reg.descripcion;
 				end;
 			end;
-			reset(archivo);
+			reset(archivo); { When translating to objects: seek(archivo, pos -1) }
 			while pos > 1 do
 			begin
 				read(archivo,reg);
 				dec(pos);
-			end;
+			end;		{ End translation note }
+			
 			writeln('Descripción previa:');
 			writeln(aux.descripcion);
 			repeat

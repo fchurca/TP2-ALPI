@@ -151,6 +151,7 @@ Actually, fun can be anything, not just a function.
 				end;
 			end
 			else writeln(EMPTY_FILE, PROMPT, MANFILE);
+			close(doc);
 		end
 		else writeln(NO_FILE, PROMPT, MANFILE);		
 	end;

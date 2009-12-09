@@ -22,7 +22,7 @@ procedure modificar(var archivo:FTcolor; var parent : Rmenu);
 				'b': ret := bajaFTcolor(archivo);
 				'm': ret := modificarFTcolor(archivo);
 				'v': ret := informarFTcolor(archivo);
-				's': ;
+				's': ret := true;
 			end;
 			if not ret or (ans = 'v') then pause;
 		until (ans='s');

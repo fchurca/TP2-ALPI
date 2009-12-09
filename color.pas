@@ -10,6 +10,7 @@ interface
 		FTcolor = file of Tcolor;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
+	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
 	function validCdesc(desc:string):boolean;
 
 	function altaFTcolor(var archivo : FTcolor) : boolean;
@@ -30,19 +31,29 @@ implementation
 	var
 		ret : boolean;
 	begin
-		ret := true;
+		ret := false;
 		{$I-}
 		reset(archivo);
 		{$I+}
-		if (ioresult <> 0) then
+		if (ioresult = 0) then
+			ret := true;
+		goodFTcolor := ret;
+	end;
+
+	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
+	var
+		ret : boolean;
+	begin
+		ret := goodFTcolor(archivo) ;
+		if not ret then
 		begin
 			{$I-}
 			rewrite(archivo);
 			{$I+}
-			if (ioresult <> 0) then
-				ret := false;
+			if (ioresult = 0) then
+				ret := true;
 		end;
-		goodFTcolor := ret;
+		ensuregoodFTcolor := ret;
 	end;
 
 	function altaFTcolor(var archivo : FTcolor) : boolean;
@@ -50,13 +61,13 @@ implementation
 		reg : Tcolor; codigo : byte;
 		ret : boolean;
 	begin
-		ret := goodFTcolor(archivo);
+		ret := ensuregoodFTcolor(archivo);
 		if ret then
 		begin
 			repeat
 				begin
 				writeln('Ingrese código ');
-				readln(codigo);
+				readbyte(codigo);
 				end;
 			until codigo in [1..254];
 
@@ -69,7 +80,7 @@ implementation
 
 			if codigo = reg.codigo then
 			begin
-				writeln('Ya existe. Tal vez quiere modificarlo.');
+				writeln('Ya existe (', reg.descripcion, ')');
 				ret := false;
 			end
 			else
@@ -80,17 +91,50 @@ implementation
 				write(archivo,reg);
 			end;
 		end
-		else writeln('Archivo no disponible');
+		else writeln(NO_FILE);
 		altaFTcolor := ret;
 	end;
 
 	function bajaFTcolor(var archivo : FTcolor) : boolean;
 	var
 		ret : boolean;
+		codigo : byte;
+		archaux : FTcolor;
+		reg : Tcolor;
 	begin
-		writeln('Dummy function for colour entry deletion');
-		ret := goodFTcolor(archivo);
-		bajaFTcolor := ret;
+		ret := false;
+		if goodFTcolor(archivo) then
+		begin
+			assign(archaux,'$TMP$');
+			{$I-}
+			rewrite(archaux);
+			{$I+}
+			if ioresult = 0 then
+			begin
+				ret := true;
+				writeln('Ingrese el código del color a borrar');
+				readbyte(codigo);
+				while not eof(archivo) do
+				begin
+					read(archivo,reg);
+					if codigo <> reg.codigo then
+						write(archaux,reg)
+					else
+						writeln(reg.descripcion);
+				end;
+				reset(archaux);
+				rewrite(archivo);
+				while not eof(archaux) do
+				begin
+					read(archaux,reg);
+					write(archivo,reg);
+				end;
+				close(archaux);
+				erase(archaux);
+			end;
+			close(archivo);
+		end;
+			
 	end;
 
 	function modificarFTcolor(var archivo : FTcolor) : boolean;
@@ -104,8 +148,8 @@ implementation
 		encontrado := goodFTcolor(archivo);
 		if encontrado then
 		begin
-			writeln('Ingrese codigo');
-			readln(cod);
+			writeln('Ingrese el código del color a modificar');
+			readbyte(cod);
 			encontrado := false;
 			pos := 0;
 			while not (encontrado or eof(archivo)) do
@@ -149,7 +193,7 @@ implementation
 				writeln(reg.codigo:3, '    | ', reg.descripcion);
 			end
 		end
-		else writeln('Archivo no disponible');
+		else writeln(NO_FILE);
 		informarFTcolor := ret;
 	end;
 end.

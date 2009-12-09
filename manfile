@@ -13,9 +13,9 @@ c	Modificar archivo de colores
 s	Atrás
 <>
 Colores
-m	Modificar la descripción de un color
 a	Agregar un color
-(X)b	Borrar un color
+b	Borrar un color
+m	Modificar la descripción de un color
 v	Ver colores
 s	Atrás
 <>

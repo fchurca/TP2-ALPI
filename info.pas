@@ -1,51 +1,44 @@
 unit info;
 
 interface
-	procedure help;
+	const
+		PROMPT	= ': ';
+
+		NO_FILE = 'Archivo no disponible';
+		EMPTY_FILE = 'Archivo vacío';
+		PRESSTOCONTINUE = 'Presione una tecla para continuar';
+
+	procedure readbyte(var ret : byte);
 	procedure pause;
 	function goodtext(var archivo : text) : boolean;
 	
 implementation
 	uses crt;
 
-	const
-		HELPFILE = 'help';
+	procedure readbyte(var ret : byte);
+	begin
+		repeat
+			{$I-}
+			readln(ret);
+			{$I+}
+		until ioresult = 0;
+	end;
 
 	function goodtext(var archivo : text) : boolean;
-	var
-		ret : boolean;
 	begin
 		{$I-}
 		reset(archivo);
 		{$I+}
-		if (ioresult <> 0) then
-		begin
-			writeln('Archivo no disponible');
-			ret := false;
-		end
+		if (ioresult = 0) then
+			goodtext := true
 		else
-			ret := true;
-		goodtext := ret;
+			goodtext := false;
 	end;
 
 	procedure pause;
 	begin
-		writeln('Presione una tecla para continuar...');
+		writeln(PRESSTOCONTINUE);
 		readkey;
-	end;
-
-	procedure help;
-	var
-		fhelpfile : text;
-		dump : string;
-	begin
-		assign(fhelpfile, HELPFILE);
-		if goodtext(fhelpfile) then
-			while not eof(fhelpfile) do
-			begin
-				readln(fhelpfile, dump);
-				writeln(dump);
-			end;
 	end;
 end.
 

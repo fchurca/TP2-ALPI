@@ -1,18 +1,9 @@
 unit menu;
 
 interface
-
 	const
-	{ Messages }
-		MAN_NOFILE	= 'Archivo de manual no disponible';
-		MAN_EMPTYFILE	= 'Archivo de manual vacío';
-		MAN_NOENTRY	= 'No hay entrada de manual para ';
-		MAN_EMPTYENTRY	= 'Entrada de manual vacía para ';
-
 		EMPTY	= '';
 		HSEP	= '/';
-		PROMPT	= ':';
-		MANFILE	 = 'manfile';
 
 	type
 		Rmenu = record
@@ -20,7 +11,8 @@ interface
 			level : integer;
 		end;
 
-	procedure RTFM(fun : string);
+	function RTFM(fun : string) : boolean;
+	procedure help;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
 	procedure inheritmenu(var parent, child : Rmenu);
@@ -30,6 +22,11 @@ interface
 
 implementation
 	uses crt, info;
+	const
+		MANFILE		 = 'manfile';
+	{ Messages }
+		MAN_NOENTRY	= 'No hay entrada de manual para ';
+		MAN_EMPTYENTRY	= 'Entrada de manual vacía para ';
 {
 Read The Fabulous Manual!
 Format:
@@ -44,17 +41,18 @@ Format:
 	<terminator>
 	fun2
 	...
-	<terminator> // optional at end of file
+	<terminator>
 Actually, fun can be anything, not just a function.
 }
-	procedure RTFM(fun : string);
+	function RTFM(fun : string) : boolean;
 	var
 		doc : text;
 		terminator, dump : string;
-		found : boolean;
+		found, ret : boolean;
 	begin
 	{ Assume we won't find fun }
 		found := false;
+		ret := false;
 	{ Need a readable non-empty manual }
 		assign(doc, MANFILE);
 		if goodtext(doc)then
@@ -76,6 +74,7 @@ Actually, fun can be anything, not just a function.
 							readln(doc,dump);
 						if (dump <> terminator) and not eof(doc) then
 						begin
+							ret := true;
 							{ Help with using fun }
 							repeat
 								writeln(dump);
@@ -90,12 +89,13 @@ Actually, fun can be anything, not just a function.
 				if not found then writeln(MAN_NOENTRY, fun);
 			end
 			{ Empty manfile }
-			else writeln(MAN_EMPTYFILE);
+			else writeln(EMPTY_FILE, PROMPT, MANFILE);
 			{ Close open good manfile }
 			close(doc);
 		end
 		{ No manfile }
-		else writeln(MAN_NOFILE);
+		else writeln(NO_FILE, PROMPT, MANFILE);
+		RTFM := ret;
 	end;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
@@ -131,5 +131,27 @@ Actually, fun can be anything, not just a function.
 		promptmenu(menu);
 		RTFM(menu.name);
 		write(PROMPT);
+	end;
+
+	procedure help;
+	var
+		doc : text;
+		terminator, dump : string;
+	begin
+		assign(doc, MANFILE);
+		if goodtext(doc) then
+		begin
+			if not eof(doc) then
+			begin
+				readln(doc, terminator);
+				while not eof(doc) do
+				begin
+					readln(doc, dump);
+					if not (dump = terminator) then writeln(dump);
+				end;
+			end
+			else writeln(EMPTY_FILE, PROMPT, MANFILE);
+		end
+		else writeln(NO_FILE, PROMPT, MANFILE);		
 	end;
 end.

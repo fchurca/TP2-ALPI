@@ -11,7 +11,7 @@ interface
 			level : integer;
 		end;
 
-	function RTFM(fun : string) : boolean;
+	function man(fun : string) : boolean;
 	procedure help;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
@@ -28,7 +28,7 @@ implementation
 		MAN_NOENTRY	= 'No hay entrada de manual para ';
 		MAN_EMPTYENTRY	= 'Entrada de manual vacía para ';
 {
-Read The Fabulous Manual!
+manual
 Format:
 	<terminator>
 	fun1
@@ -44,7 +44,7 @@ Format:
 	<terminator>
 Actually, fun can be anything, not just a function.
 }
-	function RTFM(fun : string) : boolean;
+	function man(fun : string) : boolean;
 	var
 		doc : text;
 		terminator, dump : string;
@@ -95,7 +95,7 @@ Actually, fun can be anything, not just a function.
 		end
 		{ No manfile }
 		else writeln(NO_FILE, PROMPT, MANFILE);
-		RTFM := ret;
+		man := ret;
 	end;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
@@ -129,7 +129,7 @@ Actually, fun can be anything, not just a function.
 	procedure vprompt(var menu : Rmenu);
 	begin
 		promptmenu(menu);
-		RTFM(menu.name);
+		man(menu.name);
 		write(PROMPT);
 	end;
 

@@ -1,6 +1,6 @@
 program TP2;
 
-uses crt, dos, info, menu{, color, tamano, objeto};
+uses crt, dos, info, menu, color{, tamano, objeto};
 
 const
 	PROGNAME = 'TP2 Grupo 4';
@@ -17,7 +17,7 @@ procedure mainmenu;
 				readln(ans);
 				case	ans of
 //					'o': Omenu(this);
-//					'c': Cmenu(this);
+					'c': Cmenu(this);
 //					't': Tmenu(this);
 					's': ;
 				end;

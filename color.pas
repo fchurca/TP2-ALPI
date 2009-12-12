@@ -1,20 +1,29 @@
 unit color;
 
 interface
+	uses menu;
+
 	const
 		CDESCLEN = 20;
 		COLOURFILE = 'colores.dat';
 
-	type
+	type	
 		Tcolor = record
 			codigo : byte;
 			Descripcion : string [CDESCLEN];
+		end;
+
+		TTcolor = array [1..254] of record
+			isactive : boolean;
+			description : string [CDESCLEN];
 		end;
 
 		FTcolor = file of Tcolor;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
+
+	procedure Cmenu(var parent : Rmenu);
 
 	function altaFTcolor(var archivo : FTcolor) : boolean;
 	function bajaFTcolor(var archivo : FTcolor) : boolean;
@@ -28,20 +37,30 @@ implementation
 	var
 		this : Rmenu;
 		ans:char;
+		archivo : FTcolor;
+		tabla : TTcolor;
 	begin
 		initmenu(parent, this, 'Colores');
-		repeat
-			vprompt(this);
-			readln(ans);
-			case	ans of
-				'a': altaFTcolor(archivo);
-				'b': bajaFTcolor(archivo);
-				'm': modificarFTcolor(archivo);
-				'v': informarFTcolor(archivo);
-				's': ;
-			end;
-			if not (ans = 's') then pause;
-		until (ans='s');
+		assign(archivo, COLOURFILE);
+		if ensuregoodFTcolor(archivo) then
+		begin
+	//		FTTcolor(archivo, tabla);
+			repeat
+				vprompt(this);
+				readln(ans);
+				case	ans of
+	//				'a': altaTTcolor(tabla);
+	//				'b': bajaTTcolor(tabla);
+	//				'm': modificarTTcolor(tabla);
+	//				'v': informarTTcolor(tabla);
+					's': ;
+				end;
+				if not (ans = 's') then pause;
+			until (ans='s');
+	//		TFTcolor(tabla, color);
+		end
+		else
+			writeln(NO_FILE, COLOURFILE);
 	end;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;

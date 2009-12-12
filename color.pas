@@ -24,6 +24,26 @@ interface
 implementation
 	uses info;
 
+	procedure Cmenu(var parent : Rmenu);
+	var
+		this : Rmenu;
+		ans:char;
+	begin
+		initmenu(parent, this, 'Colores');
+		repeat
+			vprompt(this);
+			readln(ans);
+			case	ans of
+				'a': altaFTcolor(archivo);
+				'b': bajaFTcolor(archivo);
+				'm': modificarFTcolor(archivo);
+				'v': informarFTcolor(archivo);
+				's': ;
+			end;
+			if not (ans = 's') then pause;
+		until (ans='s');
+	end;
+
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	var
 		ret : boolean;

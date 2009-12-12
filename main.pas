@@ -1,69 +1,53 @@
 program TP2;
 
-uses crt, dos, info, menu, color{, tamano, objeto};
+uses crt, dos, info, menu{, color, tamano, objeto};
 
 const
 	PROGNAME = 'TP2 Grupo 4';
 
-procedure modificar(var archivo:FTcolor; var parent : Rmenu);
-	procedure Coperacion(var parent : Rmenu);
+procedure mainmenu;
+	procedure modificar(var parent : Rmenu);
+		var
+			this : Rmenu;
+			ans:char;
+		begin
+			initmenu(parent, this, 'Modificar');
+			repeat
+				vprompt(this);
+				readln(ans);
+				case	ans of
+//					'o': Omenu(this);
+//					'c': Cmenu(this);
+//					't': Tmenu(this);
+					's': ;
+				end;
+			until (ans='s');
+		end;
 	var
 		this : Rmenu;
 		ans:char;
 	begin
-		initmenu(parent, this, 'Colores');
+		initrootmenu(this, PROGNAME, 'Principal');
 		repeat
 			vprompt(this);
 			readln(ans);
 			case	ans of
-				'a': altaFTcolor(archivo);
-				'b': bajaFTcolor(archivo);
-				'm': modificarFTcolor(archivo);
-				'v': informarFTcolor(archivo);
+				'm': modificar(this);
+//				'i': informar(archc);
+//				'a': actualizar;
 				's': ;
 			end;
-			if not (ans = 's') then pause;
-		until (ans='s');
+		until (ans = 's');
 	end;
+	
 var
-	this : Rmenu;
-	ans:char;
-begin
-	initmenu(parent, this, 'Modificar');
-	repeat
-		vprompt(this);
-		readln(ans);
-		case	ans of
-			'o': ;
-			'c': Coperacion(this);
-			't': ;
-			's': ;
-		end;
-	until (ans='s');
-end;
-
-var
-	ans: char;
-	archC:FTcolor;
 	y,m,d,w:word;
-	this : Rmenu;
 begin
-	initrootmenu(this, PROGNAME, 'Principal');
-	assign(archC, COLOURFILE);
 	clrscr;
-	help;
+	man(PROGNAME);
 	pause;
-	repeat
-		vprompt(this);
-		readln(ans);
-		case	ans of
-			'm': modificar(archC, this);
-{			'i': informar(archc);
-			'a': actualizar;}
-			's': ;
-			else writeln('Comando inválido');
-		end;
-	until (ans = 's');
+
+	mainmenu;
 
 	getdate(y,m,d,w);
 	writeln('date: ',y,'-',m,'-',d,':',w);

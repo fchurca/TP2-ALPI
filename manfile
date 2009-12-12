@@ -1,22 +1,46 @@
 <>
+TP2 Grupo 4
+
+INGRESE SLPASHSCREEN AQUÍ
+
+<>
 Principal
-(X)a	Actualizar los contenidos de los depósitos
-(X)i	Informar detalles de la actualización (correr 'Actualizar' antes)
+a	Actualizar los contenidos de los depósitos
+i	Informar detalles de la actualización (correr 'Actualizar' antes)
 m	Modificar archivos de datos
 s	Salir
 <>
 Modificar
-(X)o	Modificar archivo de objetos
+o	Modificar archivo de objetos
 c	Modificar archivo de colores
-(X)t	Modificar archivo de tamaños
-(X)d	Generar criterios para los depósitos en base a un archivo CSV
+t	Modificar archivo de tamaños
 s	Atrás
+<>
+Objetos
+a	Agregar un objeto
+b	Borrar un objeto
+m	Modificar propiedades de un objeto
+v	Ver colores
+s	Aplicar cambios y volver
+<>
+Modificar objeto
+d	Modificar descripción
+c	Modificar color
+t	Modificar tamaño
+s	Volver
 <>
 Colores
 a	Agregar un color
 b	Borrar un color
 m	Modificar la descripción de un color
 v	Ver colores
-s	Atrás
+s	Aplicar cambios y volver
+<>
+Tamaños
+a	Agregar un tamaño
+b	Borrar un tamaño
+m	Modificar la descripción de un tamaño
+v	Ver tamaños
+s	Aplicar cambios y volver
 <>
 

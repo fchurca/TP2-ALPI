@@ -8,11 +8,9 @@ interface
 	type
 		Rmenu = record
 			owner, name, fullname : string;
-			level : integer;
 		end;
 
 	function man(fun : string) : boolean;
-	procedure help;
 
 	procedure initrootmenu(var menu : Rmenu; owner, name : string);
 	procedure inheritmenu(var parent, child : Rmenu);
@@ -103,13 +101,11 @@ Actually, fun can be anything, not just a function.
 		menu.owner := owner;
 		menu.name := name;
 		menu.fullname := name + HSEP;
-		menu.level := 0;
 	end;
 
 	procedure inheritmenu(var parent, child : Rmenu);
 	begin
 		child.owner := parent.owner;
-		child.level := parent.level + 1;
 		child.fullname := parent.fullname + child.name + HSEP;
 	end;
 
@@ -131,28 +127,5 @@ Actually, fun can be anything, not just a function.
 		promptmenu(menu);
 		man(menu.name);
 		write(PROMPT);
-	end;
-
-	procedure help;
-	var
-		doc : text;
-		terminator, dump : string;
-	begin
-		assign(doc, MANFILE);
-		if goodtext(doc) then
-		begin
-			if not eof(doc) then
-			begin
-				readln(doc, terminator);
-				while not eof(doc) do
-				begin
-					readln(doc, dump);
-					if not (dump = terminator) then writeln(dump);
-				end;
-			end
-			else writeln(EMPTY_FILE, PROMPT, MANFILE);
-			close(doc);
-		end
-		else writeln(NO_FILE, PROMPT, MANFILE);		
 	end;
 end.

@@ -189,7 +189,7 @@ implementation
 			begin
 				repeat
 					writeln('Descripcion: ');
-					read(desc);
+					readln(desc);
 				until length(desc) < CDESCLEN;
 				tabla[cod].descripcion := desc;
 				tabla[cod].isactive := true;
@@ -228,7 +228,7 @@ implementation
 				repeat
 					writeln('Descripción vieja: ', tabla[cod].descripcion);
 					writeln('Descripción nueva: ');
-					read(desc);
+					readln(desc);
 				until length(desc) < CDESCLEN;
 				tabla[cod].descripcion := desc;
 			end

@@ -85,6 +85,7 @@ implementation
 	function loadFTcolor(var archivo : FTcolor;var tabla :TTcolor) : boolean;
 		var
 			reg : Tcolor;
+			ans : char;
 			i : byte;
 		begin
 			if goodFTcolor(archivo) then
@@ -94,8 +95,21 @@ implementation
 				while (not eof(archivo)) do
 				begin
 					read(archivo,reg);
-					tabla[reg.codigo].descripcion := reg.descripcion;
-					tabla[reg.codigo].isactive := true;
+					if tabla[reg.codigo].isactive then
+					begin
+						writeln(reg.codigo, ' ya existe (',tabla[reg.codigo].descripcion, '). Sobreescribir con ', reg.descripcion, '? (s/N)');
+						readln(ans);
+						if toupper(ans) = 'S' then
+						begin
+							tabla[reg.codigo].descripcion := reg.descripcion;
+							tabla[reg.codigo].isactive := true;
+						end;
+					end
+					else
+					begin
+						tabla[reg.codigo].descripcion := reg.descripcion;
+						tabla[reg.codigo].isactive := true;
+					end;
 				end;
 				loadFTcolor := true;
 			end

@@ -86,7 +86,7 @@ implementation
 	function loadFTtamano(var archivo : FTtamano;var tabla :TTtamano) : boolean;
 		var
 			reg : Ttamano;
-			i : char;
+			c, ans, i : char;
 		begin
 			if goodFTtamano(archivo) then
 			begin
@@ -95,8 +95,22 @@ implementation
 				while (not eof(archivo)) do
 				begin
 					read(archivo,reg);
-					tabla[toupper(reg.codigo)].descripcion := reg.descripcion;
-					tabla[toupper(reg.codigo)].isactive := true;
+					c := toupper(reg.codigo);
+					if tabla[c].isactive then
+					begin
+						writeln(c, ' ya existe (',tabla[c].descripcion, '). Sobreescribir con ', reg.descripcion, '? (s/N)');
+						readln(ans);
+						if toupper(ans) = 'S' then
+						begin
+							tabla[c].descripcion := reg.descripcion;
+							tabla[c].isactive := true;
+						end;
+					end
+					else
+					begin
+						tabla[c].descripcion := reg.descripcion;
+						tabla[c].isactive := true;
+					end;
 				end;
 				loadFTtamano := true;
 			end

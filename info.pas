@@ -57,16 +57,13 @@ implementation
 
 	function toupper(c : char) : char;
 		begin
-			if islower(c) then
-				toupper := c - 'a' + 'A';
-			else
-				toupper := c;
+			toupper := UpCase(c);
 		end;
 
 	function tolower(c : char) : char;
 		begin
 			if isupper(c) then
-				tolower := c - 'A' + 'a';
+				tolower := chr(ord(c) - ord('A') + ord('a'))
 			else
 				tolower := c;
 		end;

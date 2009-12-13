@@ -10,7 +10,6 @@ interface
 		Tcolor = record
 			codigo : byte;
 			Descripcion : string [CDESCLEN];
-			isactive : boolean;
 		end;
 
 		FTcolor = file of Tcolor;
@@ -135,25 +134,28 @@ implementation
 			Cmenu := false;
 			initmenu(parent, this, 'Colores');
 			assign(archivo, COLOURFILE);
-			if loadFTcolor(archivo, tabla) then
+			if ensuregoodFTcolor(archivo) then
 			begin
-				repeat
-					vprompt(this);
-					readln(ans);
-					case	ans of
-						'a' : addTTcolorentry(tabla);
-						'b' : removeTTcolorentry(tabla);
-						'm' : editTTcolorentry(tabla);
-						'v' : dumpTTcolor(tabla);
-						's' : ;
-					end;
-					if not (ans = 's') then pause;
-				until (ans = 's');
-				if saveFTcolor(archivo, tabla) then
-					Cmenu := true;
-			end
-			else
-				writeln(NO_FILE, COLOURFILE);
+				if loadFTcolor(archivo, tabla) then
+				begin
+					repeat
+						vprompt(this);
+						readln(ans);
+						case	ans of
+							'a' : addTTcolorentry(tabla);
+							'b' : removeTTcolorentry(tabla);
+							'm' : editTTcolorentry(tabla);
+							'v' : dumpTTcolor(tabla);
+							's' : ;
+						end;
+						if ans in ['a','b','m','v'] then pause;
+					until (ans = 's');
+					if saveFTcolor(archivo, tabla) then
+						Cmenu := true;
+				end
+				else
+					writeln(NO_FILE, COLOURFILE);
+			end;
 			if not Cmenu then
 				writeln('Error al procesar ', COLOURFILE);
 		end;

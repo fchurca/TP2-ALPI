@@ -5,9 +5,9 @@ INGRESE SLPASHSCREEN AQUÍ
 
 <>
 Principal
+m	Modificar archivos de datos
 a	Actualizar los contenidos de los depósitos
 i	Informar detalles de la actualización (correr 'Actualizar' antes)
-m	Modificar archivos de datos
 s	Salir
 <>
 Modificar

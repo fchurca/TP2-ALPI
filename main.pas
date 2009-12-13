@@ -6,38 +6,41 @@ const
 	PROGNAME = 'TP2 Grupo 4';
 
 procedure mainmenu;
-	procedure modificar(var parent : Rmenu);
+	function modificar(var parent : Rmenu) : boolean;
 		var
 			this : Rmenu;
-			ans:char;
+			ans : char;
+			ret : boolean;
 		begin
 			initmenu(parent, this, 'Modificar');
 			repeat
 				vprompt(this);
 				readln(ans);
 				case	ans of
-//					'o': Omenu(this);
-					'c': Cmenu(this);
-//					't': Tmenu(this);
-					's': ;
+//					'o' : ret := Omenu(this);
+					'c' : ret := Cmenu(this);
+//					't' : ret := Tmenu(this);
+					's' : ;
 				end;
-			until (ans='s');
+			until (ans = 's') or not ret;
+			modificar := ret;
 		end;
 	var
 		this : Rmenu;
 		ans:char;
+		ret : boolean;
 	begin
 		initrootmenu(this, PROGNAME, 'Principal');
 		repeat
 			vprompt(this);
 			readln(ans);
 			case	ans of
-				'm': modificar(this);
-//				'i': informar(archc);
-//				'a': actualizar;
+				'm' : ret := modificar(this);
+//				'a' : ret := actualizar;
+//				'i' : informar(archc);
 				's': ;
 			end;
-		until (ans = 's');
+		until (ans = 's') or not ret;
 	end;
 	
 var

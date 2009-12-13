@@ -2,237 +2,231 @@ unit color;
 
 interface
 	uses menu;
-
 	const
 		CDESCLEN = 20;
 		COLOURFILE = 'colores.dat';
 
-	type	
+	type
 		Tcolor = record
 			codigo : byte;
 			Descripcion : string [CDESCLEN];
-		end;
-
-		TTcolor = array [1..254] of record
 			isactive : boolean;
-			description : string [CDESCLEN];
 		end;
 
 		FTcolor = file of Tcolor;
+		TTcolor = array [1..254] of record
+			isactive : boolean;
+			descripcion : string [CDESCLEN];
+		end;
+
+	function Cmenu(var parent : Rmenu) : boolean;
+
+	function goodcolorcode(code : byte) : boolean;
+	procedure readcolorcode(var code : byte);
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
 	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
 
-	procedure Cmenu(var parent : Rmenu);
+	function loadFTcolor(var archivo : FTcolor; var tabla :TTcolor) : boolean;
+	function saveFTcolor(var archivo : FTcolor; var tabla :TTcolor) : boolean;
 
-	function altaFTcolor(var archivo : FTcolor) : boolean;
-	function bajaFTcolor(var archivo : FTcolor) : boolean;
-	function modificarFTcolor(var archivo : FTcolor) : boolean;
-	function informarFTcolor(var archivo : FTcolor) : boolean;
+	function addTTcolorentry(var tabla : TTcolor) : boolean;
+	function removeTTcolorentry(var tabla : TTcolor) : boolean;
+	function editTTcolorentry(var tabla : TTcolor) : boolean;
+	procedure dumpTTcolor(var tabla : TTcolor);
 
 implementation
 	uses info;
 
-	procedure Cmenu(var parent : Rmenu);
-	var
-		this : Rmenu;
-		ans:char;
-		archivo : FTcolor;
-		tabla : TTcolor;
-	begin
-		initmenu(parent, this, 'Colores');
-		assign(archivo, COLOURFILE);
-		if ensuregoodFTcolor(archivo) then
+	function goodcolorcode(code : byte) : boolean;
 		begin
-	//		FTTcolor(archivo, tabla);
+			if code in [1..254] then
+				goodcolorcode := true
+			else
+				goodcolorcode := false;
+		end;
+
+	procedure readcolorcode(var code : byte);
+		begin
 			repeat
-				vprompt(this);
-				readln(ans);
-				case	ans of
-	//				'a': altaTTcolor(tabla);
-	//				'b': bajaTTcolor(tabla);
-	//				'm': modificarTTcolor(tabla);
-	//				'v': informarTTcolor(tabla);
-					's': ;
-				end;
-				if not (ans = 's') then pause;
-			until (ans='s');
-	//		TFTcolor(tabla, color);
-		end
-		else
-			writeln(NO_FILE, COLOURFILE);
-	end;
+				readln(code);
+			until goodcolorcode(code);
+		end;
 
 	function goodFTcolor(var archivo : FTcolor) : boolean;
-	var
-		ret : boolean;
-	begin
-		ret := false;
-		{$I-}
-		reset(archivo);
-		{$I+}
-		if (ioresult = 0) then
-			ret := true;
-		goodFTcolor := ret;
-	end;
+		var
+			ret : boolean;
+		begin
+			ret := false;
+			{$I-}
+			reset(archivo);
+			{$I+}
+			if (ioresult = 0) then
+				ret := true;
+			goodFTcolor := ret;
+		end;
 
 	function ensuregoodFTcolor(var archivo : FTcolor) : boolean;
-	var
-		ret : boolean;
-	begin
-		ret := goodFTcolor(archivo) ;
-		if not ret then
+		var
+			ret : boolean;
+		begin
+			ret := goodFTcolor(archivo) ;
+			if not ret then
+			begin
+				{$I-}
+				rewrite(archivo);
+				{$I+}
+				if (ioresult = 0) then
+					ret := true;
+			end;
+			ensuregoodFTcolor := ret;
+		end;
+
+
+	function loadFTcolor(var archivo : FTcolor;var tabla :TTcolor) : boolean;
+		var
+			reg : Tcolor;
+			i : byte;
+		begin
+			if goodFTcolor(archivo) then
+			begin
+				for i := 1 to 254 do
+					tabla[i].isactive := false;
+				while (not eof(archivo)) do
+				begin
+					read(archivo,reg);
+					tabla[reg.codigo].descripcion := reg.descripcion;
+					tabla[reg.codigo].isactive := true;
+				end;
+				loadFTcolor := true;
+			end
+			else loadFTcolor := false;
+		end;
+
+	function saveFTcolor(var archivo : FTcolor; var tabla : TTcolor) : boolean;
+		var
+			reg : Tcolor;
+			i : byte;
 		begin
 			{$I-}
 			rewrite(archivo);
 			{$I+}
 			if (ioresult = 0) then
-				ret := true;
-		end;
-		ensuregoodFTcolor := ret;
-	end;
-
-	function altaFTcolor(var archivo : FTcolor) : boolean;
-	var
-		reg : Tcolor; codigo : byte;
-		desc : string;
-		ret : boolean;
-	begin
-		ret := ensuregoodFTcolor(archivo);
-		if ret then
-		begin
-			repeat
-				begin
-				writeln('Ingrese código ');
-				readbyte(codigo);
-				end;
-			until codigo in [0..254];
-
-			if not eof(archivo) and (codigo < 255)  then
 			begin
-				read(archivo, reg);
-				while not (eof(archivo) or (codigo = reg.codigo))  do
-					read(archivo,reg);
-
-				if codigo = reg.codigo then
-				begin
-					writeln('Ya existe (', reg.descripcion, ')');
-					ret := false;
-				end
-				else
-				begin
-					reg.codigo := codigo;
-					repeat
-						writeln('Ingrese descripción');
-						readln(desc);
-					until length(desc) <= CDESCLEN;
-					reg.descripcion := desc;
-					write(archivo,reg);
-				end;
-			end;
-		end
-		else writeln(NO_FILE);
-		altaFTcolor := ret;
-	end;
-
-	function bajaFTcolor(var archivo : FTcolor) : boolean;
-	var
-		ret : boolean;
-		codigo : byte;
-		archaux : FTcolor;
-		reg : Tcolor;
-	begin
-		ret := false;
-		if goodFTcolor(archivo) then
-		begin
-			assign(archaux,'$TMP$');
-			{$I-}
-			rewrite(archaux);
-			{$I+}
-			if ioresult = 0 then
-			begin
-				ret := true;
-				writeln('Ingrese el código del color a borrar');
-				readbyte(codigo);
-				while not eof(archivo) do
-				begin
-					read(archivo,reg);
-					if codigo <> reg.codigo then
-						write(archaux,reg)
-					else
-						writeln(reg.descripcion);
-				end;
-				close(archaux);
-				close(archivo);
-				erase(archivo);
-				rename(archaux, COLOURFILE);
+				for i := 1 to 254 do
+					if tabla[i].isactive then
+					begin
+						reg.codigo := i;
+						reg.descripcion := tabla[i].descripcion;
+						write(archivo,reg);
+					end;
+				saveFTcolor := true;
 			end
-			else close(archivo);
+			else saveFTcolor := false;
 		end;
-		bajaFTcolor := ret;
-	end;
 
-	function modificarFTcolor(var archivo : FTcolor) : boolean;
-	var
-		pos : word;
-		reg, aux : tcolor;
-		desc : string;
-		encontrado:boolean;
-	begin
-		encontrado := goodFTcolor(archivo);
-		if encontrado then
+	function Cmenu(var parent : Rmenu) : boolean;
+		var
+			this : Rmenu;
+			ans : char;
+			archivo : FTcolor;
+			tabla : TTcolor;
 		begin
-			writeln('Ingrese el código del color a modificar');
-			readbyte(aux.codigo);
-			encontrado := false;
-			pos := 0;
-			while not (encontrado or eof(archivo)) do
+			Cmenu := false;
+			initmenu(parent, this, 'Colores');
+			assign(archivo, COLOURFILE);
+			if loadFTcolor(archivo, tabla) then
 			begin
-				read(archivo,reg);
-				inc(pos);
-				if ((reg.codigo) = aux.codigo) then
-				begin
-					encontrado:=true;
-					aux.descripcion := reg.descripcion;
-				end;
-			end;
-			reset(archivo); { When translating to objects: seek(archivo, pos -1) }
-			while pos > 1 do
-			begin
-				read(archivo,reg);
-				dec(pos);
-			end;		{ End translation note }
-			
-			writeln('Descripción previa:');
-			writeln(aux.descripcion);
-			repeat
-				writeln('Ingrese la nueva descripción');
-				readln(desc);
-			until length(desc) <= CDESCLEN;
-			aux.descripcion := desc;
-			write(archivo, aux);
-		end;
-		modificarFTcolor := encontrado;
-	end;
-
-	function informarFTcolor(var archivo : FTcolor) : boolean;
-	var
-		reg : Tcolor;
-		ret : boolean;
-	begin
-		ret := goodFTcolor(archivo);
-		if ret then
-		begin
-			if not eof(archivo) then
-				writeln('Codigo | Descripción');
-			while not eof(archivo) do
-			begin
-				read(archivo, reg);
-				writeln(reg.codigo:3, '    | ', reg.descripcion);
+				repeat
+					vprompt(this);
+					readln(ans);
+					case	ans of
+						'a' : addTTcolorentry(tabla);
+						'b' : removeTTcolorentry(tabla);
+						'm' : editTTcolorentry(tabla);
+						'v' : dumpTTcolor(tabla);
+						's' : ;
+					end;
+					if not (ans = 's') then pause;
+				until (ans = 's');
+				if saveFTcolor(archivo, tabla) then
+					Cmenu := true;
 			end
-		end
-		else writeln(NO_FILE);
-		informarFTcolor := ret;
-	end;
+			else
+				writeln(NO_FILE, COLOURFILE);
+			if not Cmenu then
+				writeln('Error al procesar ', COLOURFILE);
+		end;
+
+	function addTTcolorentry (var tabla : TTcolor): boolean;
+		var
+			agregado : boolean;
+			cod : byte;
+			desc : string;
+		begin
+			agregado := false;
+			writeln('Código del color: ');
+			readcolorcode(cod);
+			if tabla[cod].isactive then
+				writeln('El color existe')
+			else
+			begin
+				repeat
+					writeln('Descripcion: ');
+					read(desc);
+				until length(desc) < CDESCLEN;
+				tabla[cod].descripcion := desc;
+				tabla[cod].isactive := true;
+				agregado := true;
+			end;
+			addTTcolorentry := agregado;
+		end;
+
+	function removeTTcolorentry (var tabla : TTcolor): boolean;
+		var
+			cod : byte;
+			existe : boolean;
+		begin
+			existe := false;
+			writeln('Código del color: ');
+			readcolorcode(cod);
+			if tabla[cod].isactive then
+			begin
+				tabla[cod].isactive := false;
+				existe := true;
+				writeln(tabla[cod].descripcion);
+			end
+			else writeln('No hay qué borrar');
+			removeTTcolorentry := existe;
+		end;
+
+	function editTTcolorentry(var tabla : TTcolor): boolean;
+		var
+			cod : byte;
+			desc : string;
+		begin
+			writeln ('Código del color: ');
+			readcolorcode(cod);
+			if tabla[cod].isactive = true then
+			begin
+				repeat
+					writeln('Descripción vieja: ', tabla[cod].descripcion);
+					writeln('Descripción nueva: ');
+					read(desc);
+				until length(desc) < CDESCLEN;
+				tabla[cod].descripcion := desc;
+			end
+			else writeln('No hay qué modificar');
+			editTTcolorentry := tabla[cod].isactive;
+		end;
+
+	procedure dumpTTcolor(var tabla : TTcolor);
+		var
+			i : byte;
+		begin
+			writeln('Código | Descripción');
+			for i := 1 to 254 do
+				if tabla[i].isactive then
+					writeln(i : 6,' | ',tabla[i].descripcion);
+		end;
 end.
-

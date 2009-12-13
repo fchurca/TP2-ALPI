@@ -32,6 +32,7 @@ interface
 	function addTTtamanoentry(var tabla : TTtamano) : boolean;
 	function removeTTtamanoentry(var tabla : TTtamano) : boolean;
 	function editTTtamanoentry(var tabla : TTtamano) : boolean;
+	procedure seeTTtamano(var tabla : TTtamano);
 	procedure dumpTTtamano(var tabla : TTtamano);
 
 implementation
@@ -156,15 +157,17 @@ implementation
 					repeat
 						vprompt(this);
 						readln(ans);
+						ans := toupper(ans);
 						case	ans of
-							'a' : addTTtamanoentry(tabla);
-							'b' : removeTTtamanoentry(tabla);
-							'm' : editTTtamanoentry(tabla);
-							'v' : dumpTTtamano(tabla);
-							's' : ;
+							'A' : addTTtamanoentry(tabla);
+							'B' : removeTTtamanoentry(tabla);
+							'M' : editTTtamanoentry(tabla);
+							'I' : dumpTTtamano(tabla);
+							'V' : seeTTtamano(tabla);
+							'S' : ;
 						end;
-						if ans in ['a','b','m','v'] then pause;
-					until (ans = 's');
+						if ans in ['A','B','M','V','I'] then pause;
+					until (ans = 'S');
 					if saveFTtamano(archivo, tabla) then
 						Tmenu := true;
 				end
@@ -245,5 +248,17 @@ implementation
 			for i := 'A' to 'Z' do
 				if tabla[i].isactive then
 					writeln(i : 6,' | ',tabla[i].descripcion);
+		end;
+
+	procedure seeTTtamano(var tabla : TTtamano);
+		var
+			cod : char;
+		begin
+			writeln ('Código del color: ');
+			readtamanocode(cod);
+			if tabla[cod].isactive = true then
+				writeln(tabla[cod].descripcion)
+			else
+				writeln('No existe');
 		end;
 end.

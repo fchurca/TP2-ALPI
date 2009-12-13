@@ -32,6 +32,7 @@ interface
 	function addTTcolorentry(var tabla : TTcolor) : boolean;
 	function removeTTcolorentry(var tabla : TTcolor) : boolean;
 	function editTTcolorentry(var tabla : TTcolor) : boolean;
+	procedure seeTTcolor(var tabla : TTcolor);
 	procedure dumpTTcolor(var tabla : TTcolor);
 
 implementation
@@ -155,15 +156,17 @@ implementation
 					repeat
 						vprompt(this);
 						readln(ans);
+						ans := toupper(ans);
 						case	ans of
-							'a' : addTTcolorentry(tabla);
-							'b' : removeTTcolorentry(tabla);
-							'm' : editTTcolorentry(tabla);
-							'v' : dumpTTcolor(tabla);
-							's' : ;
+							'A' : addTTcolorentry(tabla);
+							'B' : removeTTcolorentry(tabla);
+							'M' : editTTcolorentry(tabla);
+							'V' : seeTTcolor(tabla);
+							'I' : dumpTTcolor(tabla);
+							'S' : ;
 						end;
-						if ans in ['a','b','m','v'] then pause;
-					until (ans = 's');
+						if ans in ['A','B','M','V','I'] then pause;
+					until (ans = 'S');
 					if saveFTcolor(archivo, tabla) then
 						Cmenu := true;
 				end
@@ -212,7 +215,7 @@ implementation
 				existe := true;
 				writeln(tabla[cod].descripcion);
 			end
-			else writeln('No hay qué borrar');
+			else writeln('No existe');
 			removeTTcolorentry := existe;
 		end;
 
@@ -232,7 +235,7 @@ implementation
 				until length(desc) < CDESCLEN;
 				tabla[cod].descripcion := desc;
 			end
-			else writeln('No hay qué modificar');
+			else writeln('No existe');
 			editTTcolorentry := tabla[cod].isactive;
 		end;
 
@@ -244,5 +247,16 @@ implementation
 			for i := 1 to 254 do
 				if tabla[i].isactive then
 					writeln(i : 6,' | ',tabla[i].descripcion);
+		end;
+	procedure seeTTcolor(var tabla : TTcolor);
+		var
+			cod : byte;
+		begin
+			writeln ('Código del color: ');
+			readcolorcode(cod);
+			if tabla[cod].isactive = true then
+				writeln(tabla[cod].descripcion)
+			else
+				writeln('No existe');
 		end;
 end.

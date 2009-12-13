@@ -20,7 +20,8 @@ Objetos
 a	Agregar un objeto
 b	Borrar un objeto
 m	Modificar propiedades de un objeto
-v	Ver colores
+v	Ver un objeto
+i	Ver todos los objetos
 s	Aplicar cambios y volver
 <>
 Modificar objeto
@@ -33,14 +34,16 @@ Colores
 a	Agregar un color
 b	Borrar un color
 m	Modificar la descripción de un color
-v	Ver colores
+v	Ver un color
+i	Ver todos los colores
 s	Aplicar cambios y volver
 <>
 Tamaños
 a	Agregar un tamaño
 b	Borrar un tamaño
 m	Modificar la descripción de un tamaño
-v	Ver tamaños
+v	Ver un tamaño
+i	Ver todos los tamaños
 s	Aplicar cambios y volver
 <>
 

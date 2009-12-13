@@ -16,13 +16,14 @@ procedure mainmenu;
 			repeat
 				vprompt(this);
 				readln(ans);
+				ans := toupper(ans);
 				case	ans of
-//					'o' : ret := Omenu(this);
-					'c' : ret := Cmenu(this);
-					't' : ret := Tmenu(this);
-					's' : ;
+//					'O' : ret := Omenu(this);
+					'C' : ret := Cmenu(this);
+					'T' : ret := Tmenu(this);
+					'S' : ;
 				end;
-			until (ans = 's') or not ret;
+			until (ans = 'S') or not ret;
 			modificar := ret;
 		end;
 	var
@@ -34,13 +35,14 @@ procedure mainmenu;
 		repeat
 			vprompt(this);
 			readln(ans);
+				ans := toupper(ans);
 			case	ans of
-				'm' : ret := modificar(this);
-//				'a' : ret := actualizar;
-//				'i' : informar(archc);
-				's': ;
+				'M' : ret := modificar(this);
+//				'A' : ret := actualizar;
+//				'I' : informar(archc);
+				'S': ;
 			end;
-		until (ans = 's') or not ret;
+		until (ans = 'S') or not ret;
 	end;
 	
 var

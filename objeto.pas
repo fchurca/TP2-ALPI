@@ -34,10 +34,8 @@ interface
 
 // addTTobjetoentry: agrega un objeto traído de teclado
 	procedure addTTobjetoentry(var archivo : FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset);
-
 // removeTTobjetoentry: marca como inactivo un objeto traido de teclado
 	procedure removeTTobjetoentry(var archivo : FTobjeto; var tabla : TTobjeto);
-
 // editTTobjetoentry : cambian el tamano, color y descripcion de un objeto
 	procedure editTTobjetoentry(var archivo: FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset; parent : Rmenu);
 

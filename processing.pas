@@ -14,7 +14,7 @@ implementation
 			Ofile : FTobjeto;
 			Otabla : TTobjeto;
 			found : boolean;
-			c1,c2: char;
+			c1, c2, c3: char;
 			code : Ocodigo;
 			auxstr, s, SOpos : string;
 			err : integer;
@@ -46,6 +46,7 @@ implementation
 			 {$I+}
 			 if ioresult = 0 then begin
 			  if goodFTdeposito(Dfile) then begin
+			   emptyFTdepositoresults(Dfile);
 			   if goodFTobjeto(Ofile) then begin
 			    loadFTobjeto(Ofile, Otabla);
 			    Opos := 0;
@@ -60,12 +61,12 @@ implementation
 			       c2 := toupper(c2);
 			       if Otabla[c1, c2].isactive then begin
 			        if not eoln(archivo) then begin
-			         read(archivo,c1);
-			         if c1 = ',' then begin
+			         read(archivo,c3);
+			         if c3 = ',' then begin
 			          if not eoln(archivo) then begin
 			           readln(archivo, auxstr);
 			           val(auxstr, cantidad, err);
-			           if (err = 0) and (cantidad > 0) and (cantidad <= 99999)then
+			           if (err = 0) and (cantidad >= 0) and (cantidad <= 99999)then
 			           begin
 			            reset(Dfile);
 			            found := false;
@@ -83,8 +84,7 @@ implementation
 			             found := false;
 			             while not(found or (i >= DEPOTSIZE)) do
 			             begin
-			              code :=depo.Objetos[i].codigo;
-			              inc(i);
+			              code := depo.Objetos[i].codigo;
 			              if (code[1] = c1) and (code[2] = c2) then
 			               found := true
 			              else if (code[1] = '?') then
@@ -93,6 +93,7 @@ implementation
 			                depo.Objetos[i].codigo[2] := c2;
 			                found := true;
 			              end;
+			              inc(i);
 			             end;
 			             if found then
 			             begin
@@ -102,12 +103,25 @@ implementation
 			             end else writeln(errfile, SOpos + ': Demasiados objetos diferentes en el depósito con esas características');
 			            end else writeln(errfile, SOpos + ': No hay depósito con esas características');
 			           end else writeln(errfile, SOpos + ': Cantidad inválida: ' + auxstr);
-			          end else writeln(errfile, SOpos + ': Esperaba una cantidad después de' + c1 + c2);
-			         end else writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
-			        end else writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
-			       end else writeln(errfile, SOpos + ': Objeto no existente: ' + c1 + c2);
-			      end else writeln(errfile, SOpos + ': Código inválido: ' + c1 + c2);
-			     end else writeln(errfile, SOpos + ': Código inválido: ' + c1);
+			          end else begin writeln(errfile, SOpos + ': Esperaba una cantidad después de' + c1 + c2);
+			           readln(archivo);
+			          end;
+			         end else begin writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
+			          readln(archivo);
+			         end;
+			        end else begin writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
+			         readln(archivo);
+			        end;
+			       end else begin writeln(errfile, SOpos + ': Objeto no existente: ' + c1 + c2);
+			        readln(archivo);
+			       end;
+			      end else begin writeln(errfile, SOpos + ': Código inválido: ' + c1 + c2);
+			       readln(archivo);
+			      end;
+			     end else begin
+			      writeln(errfile, SOpos + ': Código inválido: ' + c1);
+			      readln(archivo);
+			     end;
 			    end;
 			    actualizar := true;
 			    close(Ofile);
@@ -118,4 +132,5 @@ implementation
 			 end else writeln(NO_FILE, PROMPT, errname);
 			 close(archivo);
 			end else writeln(NO_FILE, PROMPT, archname);
+			pause;
 		end;end.

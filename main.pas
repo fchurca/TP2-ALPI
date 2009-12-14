@@ -1,6 +1,6 @@
 program TP2;
 
-uses crt, dos, info, menu, color, tamano, objeto;
+uses crt, dos, info, menu, color, tamano, objeto, deposito;
 
 const
 	PROGNAME = 'TP2 Grupo 4';
@@ -21,6 +21,7 @@ procedure mainmenu;
 					'O' : ret := Omenu(this);
 					'C' : ret := Cmenu(this);
 					'T' : ret := Tmenu(this);
+					'D' : ret := Dmenu(this);
 					'S' : ;
 				end;
 			until (ans = 'S') or not ret;

@@ -175,30 +175,30 @@ implementation
 			reg: Tobjeto;
 		begin
 			writeln('Ingrese Codigo de Objeto:');
-			repeat
-				readOcodigo(reg.codigo);
-				if tabla[reg.codigo[1], reg.codigo[2]].isactive then
-					writeln('Ya existe');
-			until not tabla[reg.codigo[1], reg.codigo[2]].isactive;
+			readOcodigo(reg.codigo);
+			if tabla[reg.codigo[1], reg.codigo[2]].isactive then
+				writeln('Ya existe')
+			else begin
 
-			writeln('Ingrese Descricion del objeto');
-			readdesc(reg.descripcion);
+				writeln('Ingrese Descripcion del objeto');
+				readdesc(reg.descripcion, DESCLEN);
 
-			repeat
-				writeln('Ingrese Codigo del color del objeto: ');
-				readln(reg.color);
-			until reg.color in colores;
-			repeat
-				writeln('Ingrese Codigo del Tamano: ');
-				readln(reg.tamano);
-				reg.tamano := toupper(reg.tamano);
-			until reg.tamano in tamanos;
+				repeat
+					writeln('Ingrese Codigo del color del objeto: ');
+					readln(reg.color);
+				until reg.color in colores;
+				repeat
+					writeln('Ingrese Codigo del Tamano: ');
+					readln(reg.tamano);
+					reg.tamano := toupper(reg.tamano);
+				until reg.tamano in tamanos;
 
-			seek(archivo, filesize(archivo));
+				seek(archivo, filesize(archivo));
 
-			write(archivo,reg);
-			tabla[reg.codigo[1], reg.codigo[2]].isactive := true;
-			tabla[reg.codigo[1], reg.codigo[2]].pos := filesize(archivo) - 1;
+				write(archivo,reg);
+				tabla[reg.codigo[1], reg.codigo[2]].isactive := true;
+				tabla[reg.codigo[1], reg.codigo[2]].pos := filesize(archivo) - 1;
+			end;
 		end;
 
 	procedure removeTTobjetoentry(var archivo:FTobjeto; var tabla : TTobjeto);
@@ -241,7 +241,7 @@ implementation
 					'D' :
 					begin
 						writeln('Nueva descripicion:');
-						readdesc(reg.descripcion);
+						readdesc(reg.descripcion, DESCLEN);
 						write(archivo, reg);
 					end;
 					'C' :

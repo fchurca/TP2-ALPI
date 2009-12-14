@@ -37,7 +37,8 @@ implementation
 			c1,c2: char;
 			code : Ocodigo;
 			Scantidad, SOpos : string;
-			cantidad, err : integer;
+			err : integer;
+			cantidad : word;
 			i : integer;
 			depo : Tdeposito;
 			Dpos, Opos : integer;
@@ -62,7 +63,7 @@ implementation
 										readln(archivo, Scantidad);
 										val(Scantidad, cantidad, err);
 {Se accede al condicional si previamente ValidarObjeto:=TRUE, entcones quedan suplidas ambas condiciones y se puede pasar al archivo deposito}
-										if (err = 0) and (cantidad in [0..999]) then
+										if (err = 0) and (cantidad in [0..99999])then
 										begin
 											reset(Dfile);
 											found := false;

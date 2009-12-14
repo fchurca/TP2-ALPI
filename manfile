@@ -5,45 +5,61 @@ INGRESE SLPASHSCREEN AQUÍ
 
 <>
 Principal
-m	Modificar archivos de datos
-a	Actualizar los contenidos de los depósitos
-i	Informar detalles de la actualización (correr 'Actualizar' antes)
-s	Salir
+m       Modificar archivos de datos
+a       Actualizar los contenidos de los depósitos
+i       Informar detalles de la actualización (correr 'Actualizar' antes)
+s       Salir
 <>
 Modificar
-o	Modificar archivo de objetos
-c	Modificar archivo de colores
-t	Modificar archivo de tamaños
-s	Atrás
+o       Modificar archivo de objetos
+c       Modificar archivo de colores
+t       Modificar archivo de tamaños
+d       Modificar archivo de depósitos
+s       Atrás
 <>
 Objetos
-a	Agregar un objeto
-b	Borrar un objeto
-m	Modificar propiedades de un objeto
-v	Ver un objeto
-i	Ver todos los objetos
-s	Aplicar cambios y volver
+a       Agregar un objeto
+b       Borrar un objeto
+m       Modificar propiedades de un objeto
+v       Ver un objeto
+i       Ver todos los objetos
+s       Aplicar cambios y volver
 <>
 Modificar objeto
-d	Modificar descripción
-c	Modificar color
-t	Modificar tamaño
-s	Volver
+d       Modificar descripción
+c       Modificar color
+t       Modificar tamaño
+s       Volver
+<>
+Depositos
+a       Agregar un depósito
+b       Borrar un depósito
+m       Modificar propiedades de un depósito
+v       Ver un depósito
+i       Ver todos los depósitos
+s       Aplicar cambios y volver
+<>
+Modificar deposito
+d       Modificar descripción
+u       Modificar ubicación
+c       Modificar color
+t       Modificar tamaño
+s       Volver
 <>
 Colores
-a	Agregar un color
-b	Borrar un color
-m	Modificar la descripción de un color
-v	Ver un color
-i	Ver todos los colores
-s	Aplicar cambios y volver
+a       Agregar un color
+b       Borrar un color
+m       Modificar la descripción de un color
+v       Ver un color
+i       Ver todos los colores
+s       Aplicar cambios y volver
 <>
 Tamaños
-a	Agregar un tamaño
-b	Borrar un tamaño
-m	Modificar la descripción de un tamaño
-v	Ver un tamaño
-i	Ver todos los tamaños
-s	Aplicar cambios y volver
+a       Agregar un tamaño
+b       Borrar un tamaño
+m       Modificar la descripción de un tamaño
+v       Ver un tamaño
+i       Ver todos los tamaños
+s       Aplicar cambios y volver
 <>
 

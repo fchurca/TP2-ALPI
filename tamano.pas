@@ -187,7 +187,7 @@ implementation
 			else
 			begin
 				writeln('Descripcion: ');
-				readdesc(tabla[cod].descripcion);
+				readdesc(tabla[cod].descripcion, DESCLEN);
 				tabla[cod].isactive := true;
 				agregado := true;
 			end;
@@ -222,7 +222,7 @@ implementation
 			begin
 				writeln('Descripción vieja: ', tabla[cod].descripcion);
 				writeln('Descripción nueva: ');
-				readdesc(tabla[cod].descripcion);
+				readdesc(tabla[cod].descripcion, DESCLEN);
 			end
 			else writeln('No hay qué modificar');
 			editTTtamanoentry := tabla[cod].isactive;

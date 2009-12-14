@@ -11,7 +11,7 @@ interface
 		PRESSTOCONTINUE = 'Presione una tecla para continuar';
 
 	procedure readbyte(var ret : byte);
-	procedure readdesc(var desc : string);
+	procedure readdesc(var desc : string; len : integer);
 	procedure pause;
 	function goodtext(var archivo : text) : boolean;
 	function ensuregoodtext(var archivo : text) : boolean;
@@ -26,15 +26,15 @@ interface
 implementation
 	uses crt;
 
-	procedure readdesc(var desc : string);
+	procedure readdesc(var desc : string; len : integer);
 		var
 			str : string;
 		begin
 			repeat
 				readln(str);
-				if not length(str) in [1..DESCLEN] then
-					writeln('Debe tener ', DESCLEN, ' caracteres como máximo y no ser vacía');
-			until length(str) in [1..DESCLEN];
+				if not length(str) in [1..len] then
+					writeln('Debe tener ', len, ' caracteres como máximo y no ser vacía');
+			until length(str) in [1..len];
 			desc := str;
 		end;
 

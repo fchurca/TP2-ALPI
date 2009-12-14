@@ -16,6 +16,9 @@ interface
 	function goodtext(var archivo : text) : boolean;
 	function ensuregoodtext(var archivo : text) : boolean;
 
+	function suc(c : char) : char;
+	function pre(c : char) : char;
+
 	function isalpha(c : char) : boolean;
 	function isnumber(c : char) : boolean;
 	function isupper(c : char) : boolean;
@@ -25,6 +28,15 @@ interface
 	
 implementation
 	uses crt;
+
+	function suc(c : char) : char;
+		begin
+			suc := chr(ord(c) + 1);
+		end;
+	function pre(c : char) : char;
+		begin
+			pre := chr(ord(c) - 1);
+		end;
 
 	procedure readdesc(var desc : string; len : integer);
 		var

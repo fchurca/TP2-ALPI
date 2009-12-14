@@ -1,21 +1,20 @@
 unit tamano;
 
 interface
-	uses menu;
+	uses info, menu;
 	const
-		TDESCLEN = 20;
 		SIZEFILE = 'tamanos.dat';
 
 	type
 		Ttamano = record
 			codigo : char;
-			Descripcion : string [20];
+			Descripcion : string [DESCLEN];
 		end;
 
 		Fttamano = file of Ttamano;
 		TTtamano = array ['A'..'Z'] of record
 			isactive : boolean;
-			descripcion : string [TDESCLEN];
+			descripcion : string [DESCLEN];
 		end;
 
 	function Tmenu(var parent : Rmenu) : boolean;
@@ -36,14 +35,10 @@ interface
 	procedure dumpTTtamano(var tabla : TTtamano);
 
 implementation
-	uses info;
 
 	function goodtamanocode(code : char) : boolean;
 		begin
-			if code in ['A'..'Z'] then
-				goodtamanocode := true
-			else
-				goodtamanocode := false;
+			goodtamanocode := isupper(code);
 		end;
 
 	procedure readtamanocode(var code : char);
@@ -135,6 +130,7 @@ implementation
 						reg.descripcion := tabla[i].descripcion;
 						write(archivo,reg);
 					end;
+				close(archivo);
 				saveFTtamano := true;
 			end
 			else saveFTtamano := false;
@@ -182,7 +178,6 @@ implementation
 		var
 			agregado : boolean;
 			cod : char;
-			desc : string;
 		begin
 			agregado := false;
 			writeln('Código del tamaño: ');
@@ -191,11 +186,8 @@ implementation
 				writeln('El tamaño existe')
 			else
 			begin
-				repeat
-					writeln('Descripcion: ');
-					readln(desc);
-				until length(desc) < TDESCLEN;
-				tabla[cod].descripcion := desc;
+				writeln('Descripcion: ');
+				readdesc(tabla[cod].descripcion);
 				tabla[cod].isactive := true;
 				agregado := true;
 			end;
@@ -223,18 +215,14 @@ implementation
 	function editTTtamanoentry(var tabla : TTtamano): boolean;
 		var
 			cod : char;
-			desc : string;
 		begin
 			writeln ('Código del tamaño: ');
 			readtamanocode(cod);
 			if tabla[cod].isactive = true then
 			begin
-				repeat
-					writeln('Descripción vieja: ', tabla[cod].descripcion);
-					writeln('Descripción nueva: ');
-					readln(desc);
-				until length(desc) < TDESCLEN;
-				tabla[cod].descripcion := desc;
+				writeln('Descripción vieja: ', tabla[cod].descripcion);
+				writeln('Descripción nueva: ');
+				readdesc(tabla[cod].descripcion);
 			end
 			else writeln('No hay qué modificar');
 			editTTtamanoentry := tabla[cod].isactive;

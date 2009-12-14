@@ -1,21 +1,20 @@
 unit color;
 
 interface
-	uses menu;
+	uses info, menu;
 	const
-		CDESCLEN = 20;
 		COLOURFILE = 'colores.dat';
 
 	type
 		Tcolor = record
 			codigo : byte;
-			Descripcion : string [CDESCLEN];
+			Descripcion : string [DESCLEN];
 		end;
 
 		FTcolor = file of Tcolor;
 		TTcolor = array [1..254] of record
 			isactive : boolean;
-			descripcion : string [CDESCLEN];
+			descripcion : string [DESCLEN];
 		end;
 
 	function Cmenu(var parent : Rmenu) : boolean;
@@ -36,7 +35,6 @@ interface
 	procedure dumpTTcolor(var tabla : TTcolor);
 
 implementation
-	uses info;
 
 	function goodcolorcode(code : byte) : boolean;
 		begin
@@ -134,6 +132,7 @@ implementation
 						reg.descripcion := tabla[i].descripcion;
 						write(archivo,reg);
 					end;
+				close(archivo);
 				saveFTcolor := true;
 			end
 			else saveFTcolor := false;
@@ -181,7 +180,6 @@ implementation
 		var
 			agregado : boolean;
 			cod : byte;
-			desc : string;
 		begin
 			agregado := false;
 			writeln('Código del color: ');
@@ -190,11 +188,8 @@ implementation
 				writeln('El color existe')
 			else
 			begin
-				repeat
-					writeln('Descripcion: ');
-					readln(desc);
-				until length(desc) < CDESCLEN;
-				tabla[cod].descripcion := desc;
+				writeln('Descripcion: ');
+				readdesc(tabla[cod].descripcion);
 				tabla[cod].isactive := true;
 				agregado := true;
 			end;
@@ -222,18 +217,14 @@ implementation
 	function editTTcolorentry(var tabla : TTcolor): boolean;
 		var
 			cod : byte;
-			desc : string;
 		begin
 			writeln ('Código del color: ');
 			readcolorcode(cod);
 			if tabla[cod].isactive = true then
 			begin
-				repeat
-					writeln('Descripción vieja: ', tabla[cod].descripcion);
-					writeln('Descripción nueva: ');
-					readln(desc);
-				until length(desc) < CDESCLEN;
-				tabla[cod].descripcion := desc;
+				writeln('Descripción vieja: ', tabla[cod].descripcion);
+				writeln('Descripción nueva: ');
+				readdesc(tabla[cod].descripcion);
 			end
 			else writeln('No existe');
 			editTTcolorentry := tabla[cod].isactive;

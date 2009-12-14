@@ -14,6 +14,7 @@ interface
 	procedure readdesc(var desc : string);
 	procedure pause;
 	function goodtext(var archivo : text) : boolean;
+	function ensuregoodtext(var archivo : text) : boolean;
 
 	function isalpha(c : char) : boolean;
 	function isnumber(c : char) : boolean;
@@ -101,6 +102,25 @@ implementation
 				goodtext := true
 			else
 				goodtext := false;
+		end;
+		
+	function ensuregoodtext(var archivo : text) : boolean;
+		var
+			ret : boolean;
+		begin
+	{ret: Queda con el valor de si el archivo de abrio bien/mal}
+			ret := goodtext(archivo) ;
+	{Si no se abrio correctamente crea el archivo o lo pisa..}
+			if not ret then
+			begin
+				{$I-}
+				rewrite(archivo);
+				{$I+}
+	{verifico que ahora si se haya creado correctamente}
+				if (ioresult = 0) then
+					ret := true;
+			end;
+			ensuregoodtext := ret;
 		end;
 
 	procedure pause;

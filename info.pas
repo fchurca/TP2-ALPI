@@ -2,6 +2,8 @@ unit info;
 
 interface
 	const
+		LETTERS = 26;
+		DESCLEN = 20;
 		PROMPT	= ': ';
 
 		NO_FILE = 'Archivo no disponible';
@@ -9,6 +11,7 @@ interface
 		PRESSTOCONTINUE = 'Presione una tecla para continuar';
 
 	procedure readbyte(var ret : byte);
+	procedure readdesc(var desc : string);
 	procedure pause;
 	function goodtext(var archivo : text) : boolean;
 
@@ -22,6 +25,17 @@ interface
 implementation
 	uses crt;
 
+	procedure readdesc(var desc : string);
+		var
+			str : string;
+		begin
+			repeat
+				readln(str);
+				if not length(str) in [1..DESCLEN] then
+					writeln('Debe tener ', DESCLEN, ' caracteres como máximo y no ser vacía');
+			until length(str) in [1..DESCLEN];
+			desc := str;
+		end;
 
 	function isalpha(c : char) : boolean;
 		begin

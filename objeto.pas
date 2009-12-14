@@ -1,74 +1,164 @@
 unit objeto;
 
 interface
-	uses info;
+	uses info, menu, color, tamano;
 
 	const
-		LETTERS = 26;
-		ODESCLEN = 20;
+		OBJECTFILE = 'objetos.dat';
 
 	type
-		Ocodigo = array[1,2] of char;
+		Ocodigo = array[1..2] of char;
 		Tobjeto = record
 			codigo : Ocodigo;
 			color : byte;
 			tamano : char;
-			descripcion : string [ODESCLEN];
+			descripcion : string [DESCLEN];
 		end;
 
-		TFobjeto = file of Tobjeto;
-		TTobjeto = array ['A'..'Z','A'..'Z'] of record
+		FTobjeto = file of Tobjeto;
+		TTobjetoentry = record
 			isactive : boolean;
 			pos:integer;
 		end;
+		TTobjeto = array ['A'..'Z','A'..'Z'] of TTobjetoentry;
 
-// splitOcodigo : separa un string[2] en dos char para recorrer la tabla
-	procedure splitOcodigo(str : Ocodigo; var a, b : char)
+		Cset = set of byte;
+		Tset = set of char;
 
-// validarCcolor: valida si el codigo de color ingresado existe en el arhcivo colores
-	function validarCcolor(var archivo : TFcolor; reg.color : byte) : boolean;
+	function Omenu(var parent : Rmenu) : boolean;
 
-// validarCtamano: valida si el codigo de tamano ingresado existe en el archivo tamano
-	function validarCtamano (var archivo : TFtamano; tamano : char) : boolean;
+	procedure loadFTobjeto (var archivo: FTobjeto; var regT: TTobjeto);
+	function saveFTobjeto(var archivo: FTobjeto; var tabla : TTobjeto) : boolean;
 
-// existe: valida si existe el codigo de objeto ingresado
-	function existe(var tabla : TTobjeto; reg.codigo : Ocodigo) : boolean;
+// addTTobjetoentry: agrega un objeto traído de teclado
+	procedure addTTobjetoentry(var archivo : FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset);
 
-// addTTobjectentry: agrega un objeto traído de teclado
-	procedure addTTobjectentry(var tabla : TTobjeto);
+// removeTTobjetoentry: marca como inactivo un objeto traido de teclado
+	procedure removeTTobjetoentry(var archivo : FTobjeto; var tabla : TTobjeto);
 
-// removeTTobjectentry: marca como inactivo un objeto traido de teclado
-	procedure removeTTobjectentry(var tabla : TTobjeto);
-
-// editTTobjectentry : cambian el tamano, color y descripcion de un objeto
-	procedure editTTobjectentry(var tabla : TTobjeto);
+// editTTobjetoentry : cambian el tamano, color y descripcion de un objeto
+	procedure editTTobjetoentry(var archivo: FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset; parent : Rmenu);
 
 // informarTTobjeto : vuelca el contenido de la tabla a la pantalla (saltear inactivos)
-	procedure informarTTobjeto(var tabla : TTobjeto);
-
-// actualizarObjeto : guarda los cambios realizados en el indice, sobre el archivo
-	procedure actualizarObjeto(var tabla : TTobjeto; var archivo : TFobjeto);
+	procedure dumpTTobjeto(var archivo: FTobjeto; var tabla : TTobjeto);
+	procedure seeTTobjeto(var archivo: FTobjeto; var tabla : TTobjeto);
 
 implementation
-
-{Validar Codigo del Objeto a tratar}
-	function validarCodigo(cod:string):boolean;
+	function goodFTobjeto(var archivo : FTobjeto) : boolean;
+		var
+			ret : boolean;
 		begin
-			validarCodigo:=false
-			if length(cod) = 2 then
-				if isalpha(cod[1]) and isalpha(cod[2]) then
-					validarCodigo := true
+			ret := false;
+			{$I-}
+			reset(archivo);
+			{$I+}
+			if (ioresult = 0) then
+				ret := true;
+			goodFTobjeto := ret;
+		end;
+
+	function ensuregoodFTobjeto(var archivo : FTobjeto) : boolean;
+		var
+			ret : boolean;
+		begin
+			ret := goodFTobjeto(archivo) ;
+			if not ret then
+			begin
+				{$I-}
+				rewrite(archivo);
+				{$I+}
+				if (ioresult = 0) then
+					ret := true;
 			end;
+			ensuregoodFTobjeto := ret;
+		end;
+	function Omenu(var parent : Rmenu) : boolean;
+		var
+			this : Rmenu;
+			ans : char;
+			Oarchivo : FTobjeto;
+			Otabla : TTobjeto;
+			Tarchivo : FTtamano;
+			Ttabla : TTtamano;
+			tamanos : set of char;
+			Carchivo : FTcolor;
+			Ctabla : TTcolor;
+			colores : set of byte;
+			i : byte;
+			c : char;
+		begin
+			Omenu := false;
+			initmenu(parent, this, 'Objetos');
+			assign(Oarchivo, OBJECTFILE);
+			assign(Carchivo, COLOURFILE);
+			assign(Tarchivo, SIZEFILE);
+			if ensuregoodFTobjeto(Oarchivo) then
+			begin
+				loadFTobjeto(Oarchivo, Otabla);
+				if goodFTcolor(Carchivo) then
+				begin
+					loadFTcolor(Carchivo, Ctabla);
+					close(Carchivo);
+					colores := [];
+					for i := 1 to 254 do
+						if Ctabla[i].isactive then
+							colores := colores + [i];
+					if goodFTtamano(Tarchivo) then
+					begin
+						loadFTtamano(Tarchivo, Ttabla);
+						close(Tarchivo);
+						tamanos := [];
+						for c := 'A' to 'Z' do
+							if Ttabla[c].isactive then
+								tamanos := tamanos + [c];
+						repeat
+							vprompt(this);
+							readln(ans);
+							ans := toupper(ans);
+							case	ans of
+								'A' : addTTobjetoentry(Oarchivo, Otabla, colores, tamanos);
+								'B' : removeTTobjetoentry(Oarchivo, Otabla);
+								'M' : editTTobjetoentry(Oarchivo, Otabla, colores, tamanos, this);
+								'V' : seeTTobjeto(Oarchivo, Otabla);
+								'I' : dumpTTobjeto(Oarchivo, Otabla);
+								'S' : ;
+							end;
+							if ans in ['A','B','M','V','I'] then pause;
+						until (ans = 'S');
+						if saveFTobjeto(Oarchivo, Otabla) then
+							Omenu := true;
+					end
+					else writeln(NO_FILE, SIZEFILE);
+				end
+				else writeln(NO_FILE, COLOURFILE);
+				reset(Oarchivo);
+				close(Oarchivo);
+			end
+			else writeln(NO_FILE, OBJECTFILE);
+		end;
+
+	procedure readOcodigo(var reg : Ocodigo);
+		var
+			str : string;
+		begin
+			repeat
+				readln(str);
+			until isalpha(str[1]) and isalpha(str[2]);
+			reg[1] := toupper(str[1]);
+			reg[2] := toupper(str[2]);
 		end;
 
 {Cargamos la Tabla tipo TTobjeto donde guardamos: }
-	procedure loadFTobjeto (var archivo: TFobjeto; var regT: TTobjeto)
+	procedure loadFTobjeto (var archivo: FTobjeto; var regT: TTobjeto);
 		var
+			i, j: char;
 			reg : Tobjeto;
-			a, b :char;
 			pos : integer;
 		begin
+			for i:='A' to 'Z'  do for j:='A' to 'Z' do
+					regT[i][j].isactive := false;
 			pos := 0;
+			
 			reset(archivo);
 		{Recorremos el archivo cargando isactive:=TRUE y pos:=posicion del registro en base a los objetos encontrados}
 			while not eof(archivo) do
@@ -80,167 +170,162 @@ implementation
 			end;
 		end;
 
-	procedure initTabla(var tabla: TTobjeto);
-		var
-			i, j: char;
-		begin
-			for i:='A' to 'Z'  do for j:='A' to 'Z' do
-				tabla[i][j].isactive := false;
-		end;
-
-	procedure addTTobjectentry(arhivo:TFobjeto; var tabla : TTobjeto)
+	procedure addTTobjetoentry(var archivo : FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset);
 		var
 			reg: Tobjeto;
-			str : string;
 		begin
+			writeln('Ingrese Codigo de Objeto:');
 			repeat
-				repeat
-					writeln('Ingrese Codigo de Objeto:');
-					readln(str);
-				until validarCodigo(str));
-				if tabla[str[1], str[2]].isactive then
+				readOcodigo(reg.codigo);
+				if tabla[reg.codigo[1], reg.codigo[2]].isactive then
 					writeln('Ya existe');
-			until not tabla[str[1], str[2]].isactive;
-			reg.codigo[1] := toupper(str[1]);
-			reg.codigo[2] := toupper(str[2]);
+			until not tabla[reg.codigo[1], reg.codigo[2]].isactive;
+
+			writeln('Ingrese Descricion del objeto');
+			readdesc(reg.descripcion);
 
 			repeat
-				writeln('Ingrese Descricion del objeto');
-				read(str);
-			until (length(str)< ODESCLEN);
-			reg.descripcion := str;
-
-//			repeat
 				writeln('Ingrese Codigo del color del objeto: ');
-				read(reg.color);
-//			until validarCColor();
-//			repeat
+				readln(reg.color);
+			until reg.color in colores;
+			repeat
 				writeln('Ingrese Codigo del Tamano: ');
-				read(reg.tamano);
-//			until validarCTamano();
+				readln(reg.tamano);
+				reg.tamano := toupper(reg.tamano);
+			until reg.tamano in tamanos;
 
 			seek(archivo, filesize(archivo));
 
 			write(archivo,reg);
-			tabla[str[1], str[2]].isactive := true;
-			tabla[str[1], str[2]].pos := (filesize(archivo - 1));
+			tabla[reg.codigo[1], reg.codigo[2]].isactive := true;
+			tabla[reg.codigo[1], reg.codigo[2]].pos := filesize(archivo) - 1;
 		end;
 
-	procedure removeTTobjectentry(var archivo:TFobjeto; var tabla : TTobjeto);
+	procedure removeTTobjetoentry(var archivo:FTobjeto; var tabla : TTobjeto);
 		var
 			reg : Tobjeto;
-			a, b : char;
 		begin
-			repeat
-				writeln('Ingrese Codigo de Objeto:');
-				readln(str);
-			until validarCodigo(str));
-			reg.codigo[1] := toupper(str[1]);
-			reg.codigo[2] := toupper(str[2]);
+			writeln('Ingrese Codigo de Objeto:');
+			readOcodigo(reg.codigo);
 
 			if tabla[reg.codigo[1],reg.codigo[2]].isactive then
-				tabla[reg.codigo[1],reg.codigo[2]].isactive:=FALSE
+				tabla[reg.codigo[1],reg.codigo[2]].isactive := false
 			else
 				writeln('El objeto que intenta borrar no existe!!');
 		end;
 
-	procedure editTTobjectentry(var tabla : TTobjeto; archivo: TFobjeto);
+	procedure editTTobjetoentry(var archivo: FTobjeto; var tabla : TTobjeto; var colores : Cset ; var tamanos : Tset; parent : Rmenu);
 		var
-			a,b:char;
-			prop:integer;
-			objeto:Tobjeto;
-			codigo:string[2];
-			desc:string[20];
-			color:byte;
-			tamano:char;
+			ans : char;
+			reg : Tobjeto;
+			this : Rmenu;
 		begin
-			repeat
-			writeln('Ingrese el codigo del objeto a modiciar: (0 para salir)');
-			read(codigo);
-			until ((validarCodigo(codigo) and existe(TTablaObjeto,codigo)) or codigo='0');       {Hay que definir como GLOBAL la tabla de Objetos}
-			if(objeto.codigo<>'0') then
+			initmenu(parent, this, 'Modificar objeto');
+			writeln('Ingrese Codigo de Objeto:');
+			readOcodigo(reg.codigo);
+			if tabla[reg.codigo[1], reg.codigo[2]].isactive then
 			begin
-			writeln('Ingrese la propiedad del objeto que desea modificar: ');
-			writeln('1)Descripcion del Objeto');
-			writeln('2)Codigo de Color');
-			writeln('3)Codigo del Tamano');
-			read(prop);
-			case prop of
-			1: repeat
-			writeln('Ingrese Descripicion del objeto');
-			read(desc);
-			until (lenght(desc)< ODESCLEN);
-			splitOcodigo(codigo,a,b);
-			seek(archivo,(tabla[a,b].pos-1));
-			read(archivo,objeto);
-			objeto.descripcion:=desc;
-			seek(archivo,(tabla[a,b].pos-1));
-			write(archivo,objeto);
-
-			;
-			2:
-			repeat
-			writeln('Ingrese Codigo del color del objeto: ');
-			read(color);
-			until validarCColor(archivoColor.dat, color);
-			splitOcodigo(codigo,a,b);
-			seek(archivo,(tabla[a,b].pos-1));
-			read(archivo,objeto);
-			objeto.color:=color;
-			seek(archivo,(tabla[a,b].pos-1));
-			write(archivo,objeto);
-
-
-			;
-			3:
-			repeat
-			writeln('Ingrese Codigo del Tamano: ');
-			read(tamano);
-			until validarCTamano(archivoTamano.dat, tamano);
-			splitOcodigo(codigo,a,b);
-			seek(archivo,(tabla[a,b].pos-1));
-			read(archivo,objeto);
-			objeto.tamano:=tamano;
-			seek(archivo,(tabla[a,b].pos-1));
-			write(archivo,objeto);
-			;
-			end;
-			else
-			begin
-			writeln('Saliendo de modificar Objeto...');
+				repeat
+					seek(archivo, tabla[reg.codigo[1], reg.codigo[2]].pos);
+					read(archivo, reg);
+					seek(archivo,(tabla[reg.codigo[1],reg.codigo[2]].pos));
+					vprompt(this);
+					writeln(reg.codigo[1],reg.codigo[2]);
+					writeln('Descripción: ', reg.descripcion);
+					writeln('Color:       ', reg.color);
+					writeln('Tamaño:      ', reg.tamano);
+					write(PROMPT);
+					readln(ans);
+					ans := toupper(ans);
+					case ans of
+					'D' :
+					begin
+						writeln('Nueva descripicion:');
+						readdesc(reg.descripcion);
+						write(archivo, reg);
+					end;
+					'C' :
+					begin
+						repeat
+							writeln('Nuevo color: ');
+							readbyte(reg.color);
+						until reg.color in colores;
+						write(archivo, reg);
+					end;
+					'T' :
+					begin
+						repeat
+							writeln('Nuevo tamaño: ');
+							readln(reg.tamano);
+							reg.tamano := toupper(reg.tamano);
+						until reg.tamano in tamanos;
+						write(archivo, reg);
+					end;
+					'S' : ;
+					end;
+				until ans = 'S';
 			end;
 		end;
 
-   procedure informarTTobjeto(var tabla : TTobjeto);
+{Una vez terminado el procedimiento de ABM de objetos, se actualizan los cambios}
+{en un nuevo archivo temporal segun los cambios en la Tabla, se borra el original}
+{y se renombra el temporal}
+	function saveFTobjeto(var archivo : FTobjeto; var tabla :TTobjeto) : boolean;
+		var
+			reg : Tobjeto;
+			temp : FTobjeto;
+		begin
+			assign(temp,'$temp.dat$');
+			rewrite(temp);
+			reset(archivo);
 
-     Begin
+			while not eof(archivo) do
+			begin
+				read(archivo,reg);
+				if tabla[reg.codigo[1], reg.codigo[2]].isactive then
+					write(temp,reg);
+			end;
 
-      End;
-  {Una vez terminado el procedimiento de ABM de objetos, se actualizan los cambios}
-  {en un nuevo archivo temporal segun los cambios en la Tabla, se borra el original}
-  {y se renombra el temporal}
-   procedure actualizarObjeto(var tabla :TTobjeto; var archivo : TFobjeto);
-        var
-           reg: Tobjeto;
-           a,b: char;
-           temp: TFobjeto;
-        begin
+			close(archivo);
+			erase(archivo);
 
-           assign(temp,'temp.dat');
-           rewrite(temp);
+			close(temp);
+			saveFTobjeto := true;
+			rename(temp,OBJECTFILE);
+		end;
 
-           while not eof(archivo) do
-                 Begin
-                      read(archivo,reg);
-                      splitOcodigo(reg.codigo,a,b);
-                      if tabla[a,b].isactive=TRUE then write(temp,reg);
-                 End;
+	procedure dumpTTobjeto(var archivo: FTobjeto; var tabla : TTobjeto);
+		var
+			i, j : char;
+			reg : Tobjeto;
 
-                 close(archivo);
-                 erase(archivo);
+		begin
+		reset(archivo);
+		writeln;
+		writeln('Código|      Descripción     | Color | Tamaño');
+		for i:='A' to 'Z'  do for j:='A' to 'Z' do
+				if tabla[i,j].isactive then
+				begin
+					seek(archivo, (tabla[i,j].pos));
+					read(archivo,reg);
+					writeln(reg.codigo[1], reg.codigo[2], '    | ', reg.descripcion : 20, ' | ', reg.color:5, ' | ', reg.tamano:6);
+				end;
+		end;
 
-                 close(temp);
-                 rename(temp,'objeto.dat');
-                 close(temp);
+	procedure seeTTobjeto(var archivo: FTobjeto; var tabla : TTobjeto);
+		var
+			reg : Tobjeto;
+		begin
+			writeln('Ingrese Codigo de Objeto:');
+			readOcodigo(reg.codigo);
+			if tabla[reg.codigo[1], reg.codigo[2]].isactive then
+			begin
+				seek(archivo, (tabla[reg.codigo[1], reg.codigo[2]].pos));
+				read(archivo,reg);
+				writeln('Código|      Descripción     | Color | Tamaño');
+				writeln(reg.codigo[1], reg.codigo[2], '    | ', reg.descripcion : 20, ' | ', reg.color:3, ' | ', reg.tamano:4);
+			end
+			else writeln('No existe');
+		end;
 end.
 

@@ -1,6 +1,6 @@
 program TP2;
 
-uses crt, dos, info, menu, color, tamano, objeto, deposito;
+uses crt, info, menu, color, tamano, objeto, deposito, processing;
 
 const
 	PROGNAME = 'TP2 Grupo 4';
@@ -22,7 +22,7 @@ procedure mainmenu;
 					'C' : ret := Cmenu(this);
 					'T' : ret := Tmenu(this);
 					'D' : ret := Dmenu(this);
-					'S' : ;
+					'S' : ret := true;
 				end;
 			until (ans = 'S') or not ret;
 			modificar := ret;
@@ -39,22 +39,16 @@ procedure mainmenu;
 				ans := toupper(ans);
 			case	ans of
 				'M' : ret := modificar(this);
-//				'A' : ret := actualizar;
+				'A' : ret := actualizar;
 //				'I' : informar(archc);
-				'S': ;
+				'S': ret := true;
 			end;
 		until (ans = 'S') or not ret;
 	end;
-	
-var
-	y,m,d,w:word;
 begin
 	clrscr;
 	man(PROGNAME);
 	pause;
 
 	mainmenu;
-
-	getdate(y,m,d,w);
-	writeln('date: ',y,'-',m,'-',d,':',w);
 end.

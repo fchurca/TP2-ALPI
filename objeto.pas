@@ -27,6 +27,8 @@ interface
 
 	function Omenu(var parent : Rmenu) : boolean;
 
+	function goodFTobjeto(var archivo : FTobjeto) : boolean;
+
 	procedure loadFTobjeto (var archivo: FTobjeto; var regT: TTobjeto);
 	function saveFTobjeto(var archivo: FTobjeto; var tabla : TTobjeto) : boolean;
 

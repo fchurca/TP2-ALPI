@@ -18,10 +18,10 @@ Type
 
 function cargarcantidades(
 	var archivoO : FTobjeto; var archivoC : FTcolor; var archivoT : FTtamano; var archivoD : FTdeposito;
-	var TablaCcolores : TablaCcolores; var TablaCtamanos : TablaCtamanos
+	var Tablacolores : TablaCcolores; var Tablatamanos : TablaCtamanos
 ) : boolean;
 	var	
-		TablaCobjetos : TTobjeto;
+		Tablaobjetos : TTobjeto;
 		regO : Tobjeto;
 		regD : Tdeposito;
 		regC : Tcolor;
@@ -47,28 +47,28 @@ function cargarcantidades(
 		end;
 		if pass then begin
 			for i:=1 to 254 do begin
-				tablaCcolores[i].codigo := 0;
-				tablaCcolores[i].cantidad := 0;
+				tablacolores[i].codigo := 0;
+				tablacolores[i].cantidad := 0;
 			end;
 			for j:='A' to 'Z' do begin
-				tablaCtamanos[j].codigo := ' ';
-				tablaCtamanos[j].cantidad := 0;
+				tablatamanos[j].codigo := ' ';
+				tablatamanos[j].cantidad := 0;
 			end;
 
 			while not eof(archivoC) do begin
 				read(archivoC, regC);
 				if goodcolorcode(regC.codigo) then begin
-					tablaCcolores[regC.codigo].codigo := regC.codigo;
+					tablacolores[regC.codigo].codigo := regC.codigo;
 				end else writeln('Color inválido: ', regC.codigo);
 			end;
 			while not eof(archivoT) do begin
 				read(archivoT, regT);
 				if isalpha(regT.codigo) then begin
 					regT.codigo := toupper(regT.codigo);
-					tablaCtamanos[RegT.codigo].codigo := RegT.codigo;
+					tablatamanos[RegT.codigo].codigo := RegT.codigo;
 				end else writeln('Tamaño inválido: ', regT.codigo);
 			end;
-			loadFTobjeto(archivoO, TablaCobjetos);
+			loadFTobjeto(archivoO, Tablaobjetos);
 
 			while pass and not eof(archivoD) do begin
 			 read(archivoD, regD);
@@ -84,12 +84,12 @@ function cargarcantidades(
 			  k := regD.objetos[i].codigo[2];
 			  if (j in ['A'..'Z']) and (k in ['A'..'Z']) then begin
 			   c := regD.objetos[i].cantidad;
-			   if TablaCobjetos[j][k].isactive then begin
-			    if TablaCobjetos[j][k].pos > filesize(archivoO) then begin
+			   if Tablaobjetos[j][k].isactive then begin
+			    if Tablaobjetos[j][k].pos > filesize(archivoO) then begin
 			     writeln('Tabla de objetos inconsistente con ', OBJECTFILE);
 			     pass := false;
 			    end else begin
-			     seek(archivoO, TablaCobjetos[j][k].pos);
+			     seek(archivoO, Tablaobjetos[j][k].pos);
 			     read(archivoO, regO);
 			     if (j <> regO.codigo[1]) or (k <> regO.codigo[2]) then begin
 			      writeln('Tabla de objetos inconsistente con ', OBJECTFILE);
@@ -97,8 +97,8 @@ function cargarcantidades(
 			     end else begin
 			      if regO.tamano in ['A'..'Z'] then
 			       if regO.color in [1..254] then begin
-			        inc(tablaCcolores[regO.color].cantidad, c);
-			        inc(tablaCtamanos[regO.tamano].cantidad, c);
+			        inc(tablacolores[regO.color].cantidad, c);
+			        inc(tablatamanos[regO.tamano].cantidad, c);
 			       end else writeln('Color inválido para ', j, k, PROMPT, regO.color)
 			      else writeln('Tamaño inválido para ', j, k, PROMPT, regO.tamano);
 			     end;
@@ -108,6 +108,7 @@ function cargarcantidades(
 			  end
 			  else if (j <> '?') or (k <> '?') then
 			   writeln('Objeto inválido: ', j, k);
+			  inc(i);
 			 end;
 			end;
 		end;
@@ -116,26 +117,24 @@ function cargarcantidades(
 
 
 //2. Cuántos objetos hay de cada color y tamano
-Procedure I2(var TablaCcolores : TablaCcolores);
-
-		var
-	i:byte;
+Procedure I2(var Tablacolores : TablaCcolores);
+	var
+		i:byte;
 	begin
 		writeln('Color | Cantidad');
 		for i:=1 to 254 do
-			if tablaccolores[i].cantidad > 0 then
-				writeln(tablaccolores[i].codigo:5, ' | ', tablaccolores[i].cantidad);
+			if tablacolores[i].cantidad > 0 then
+				writeln(tablacolores[i].codigo:5, ' | ', tablacolores[i].cantidad);
 	end;
 
-procedure I3(var TablaCtamanos : TablaCtamanos);
-
+procedure I3(var Tablatamanos : TablaCtamanos);
 	var
-	i : char;
+		i : char;
 	begin
 		writeln('Tamaño | Cantidad');
 		for i:= 'A' to 'Z' do
-			if tablaCtamanos[i].cantidad > 0 then
-				writeln(tablaCtamanos[i].codigo:6, ' | ', tablaCtamanos[i].cantidad);
+			if tablatamanos[i].cantidad > 0 then
+				writeln(tablatamanos[i].codigo:6, ' | ', tablatamanos[i].cantidad);
 	end;
 
 
@@ -179,42 +178,43 @@ procedure burbujeotamanos(var A : TablaCtamanos; ascending : boolean);
 	end;
 //4. Para que color/es hay menos objetos.
 
-Procedure I4 (var tablaCcolores : tablaCcolores);
+Procedure I4 (var tablacolores : tablaCcolores);
 	var
 		i:byte;
 	begin
 		i:=1;
-		burbujeocolores(tablaCcolores, false);
+		burbujeocolores(tablacolores, false);
 
-		while (tablaCcolores[i].cantidad = 0) and (i <= 254) do inc(i);
+		while (tablacolores[i].cantidad = 0) and (i <= 254) do inc(i);
 		repeat
-			writeln(tablaCcolores[i].codigo,'	',tablaCcolores[i].cantidad);
+			writeln(tablacolores[i].codigo,' ',tablacolores[i].cantidad);
 			inc(i);
-		until (tablaCcolores[i].cantidad<>tablaccolores[i-1].cantidad) or (i > 254);
+		until (tablacolores[i].cantidad<>tablacolores[i-1].cantidad) or (i > 254);
 	end;
 //5. Para que tamano hay mas objetos
-procedure I5(var TablaCtamanos : TablaCtamanos);
+procedure I5(var Tablatamanos : TablaCtamanos);
 	var
 		I:char;
 	begin
-		burbujeotamanos(tablaCtamanos, true);
-		writeln(tablaCtamanos['A'].codigo, ' ', tablactamanos['A'].cantidad);
+		burbujeotamanos(tablatamanos, true);
+		writeln(tablatamanos['A'].codigo, ' ', tablatamanos['A'].cantidad);
 		for I:='B' to 'Z' do
-			if tablactamanos[i].cantidad = tablactamanos['A'].cantidad then
-				writeln(tablaCtamanos[i].codigo,' ',tablactamanos[i].cantidad);
+			if tablatamanos[i].cantidad = tablatamanos['A'].cantidad then
+				writeln(tablatamanos[i].codigo,' ',tablatamanos[i].cantidad);
 	end;
 var
-
-Ccolores:FTcolor;
-Ctamanos:FTtamano;
-Cdepositos:FTdeposito;
-
-
+	Cobjetos : FTobjeto;
+	Ccolores : FTcolor;
+	Ctamanos : FTtamano;
+	Cdepositos : FTdeposito;
+	Tablacolores : TablaCcolores;
+	Tablatamanos : TablaCtamanos;
 begin
-	assign(Ccolores,COLOURFILE);
-	assign(Ctamanos,SIZEFILE);
-	assign(Cdepositos,DEPOTFILE);
-
+	assign(Ccolores, COLOURFILE);
+	assign(Ctamanos, SIZEFILE);
+	assign(Cdepositos, DEPOTFILE);
+	assign(Cobjetos, OBJECTFILE);
+	cargarcantidades(Cobjetos, Ccolores, Ctamanos, Cdepositos, Tablacolores, Tablatamanos);
 	pause;
 end.
 

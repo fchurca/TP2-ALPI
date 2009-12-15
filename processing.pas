@@ -84,20 +84,21 @@ implementation
 			             found := false;
 			             while not(found or (i >= DEPOTSIZE)) do
 			             begin
+			              inc(i);
 			              code := depo.Objetos[i].codigo;
 			              if (code[1] = c1) and (code[2] = c2) then
 			               found := true
-			              else if (code[1] = '?') then
+			              else if (code[1] = '?') and (code[2] = '?') then
 			              begin
 			                depo.Objetos[i].codigo[1] := c1;
 			                depo.Objetos[i].codigo[2] := c2;
 			                found := true;
 			              end;
-			              inc(i);
 			             end;
 			             if found then
 			             begin
 			              inc(depo.Objetos[i].cantidad, cantidad);
+writeln(depo.Objetos[i].codigo[1],depo.Objetos[i].codigo[2],',',depo.Objetos[i].cantidad);
 			              seek(Dfile, Dpos);
 			              write(Dfile,depo);
 			             end else writeln(errfile, SOpos + ': Demasiados objetos diferentes en el depósito con esas características');

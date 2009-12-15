@@ -23,7 +23,7 @@ function cargarcantidades(
 	var	
 		Tablaobjetos : TTobjeto;
 		regO : Tobjeto;
-		regD : Tdeposito;
+		depo : Tdeposito;
 		regC : Tcolor;
 		regT : Ttamano;
 		i : byte;
@@ -47,11 +47,11 @@ function cargarcantidades(
 		end;
 		if pass then begin
 			for i:=1 to 254 do begin
-				tablacolores[i].codigo := 0;
+				tablacolores[i].codigo := i;
 				tablacolores[i].cantidad := 0;
 			end;
 			for j:='A' to 'Z' do begin
-				tablatamanos[j].codigo := ' ';
+				tablatamanos[j].codigo := j;
 				tablatamanos[j].cantidad := 0;
 			end;
 
@@ -71,19 +71,19 @@ function cargarcantidades(
 			loadFTobjeto(archivoO, Tablaobjetos);
 
 			while pass and not eof(archivoD) do begin
-			 read(archivoD, regD);
-			 pass := goodcolorcode(regD.color);
-			 if not pass then writeln('Color inválido para el depósito ', regD.codigo, PROMPT, regD.color);
+			 read(archivoD, depo);
+			 pass := goodcolorcode(depo.color);
+			 if not pass then writeln('Color inválido para el depósito ', depo.codigo, PROMPT, depo.color);
 			 if pass then begin
-			  pass := goodtamanocode(regD.tamano);
-			  if not pass then writeln('Tamaño inválido para el depósito ', regD.codigo, PROMPT, regD.tamano);
+			  pass := goodtamanocode(depo.tamano);
+			  if not pass then writeln('Tamaño inválido para el depósito ', depo.codigo, PROMPT, depo.tamano);
 			 end;
 			 i := 1;
 			 while pass and (i <= DEPOTSIZE) do begin
-			  j := regD.objetos[i].codigo[1];
-			  k := regD.objetos[i].codigo[2];
+			  j := depo.objetos[i].codigo[1];
+			  k := depo.objetos[i].codigo[2];
 			  if (j in ['A'..'Z']) and (k in ['A'..'Z']) then begin
-			   c := regD.objetos[i].cantidad;
+			   c := depo.objetos[i].cantidad;
 			   if Tablaobjetos[j][k].isactive then begin
 			    if Tablaobjetos[j][k].pos > filesize(archivoO) then begin
 			     writeln('Tabla de objetos inconsistente con ', OBJECTFILE);
@@ -123,8 +123,7 @@ Procedure I2(var Tablacolores : TablaCcolores);
 	begin
 		writeln('Color | Cantidad');
 		for i:=1 to 254 do
-			if tablacolores[i].cantidad > 0 then
-				writeln(tablacolores[i].codigo:5, ' | ', tablacolores[i].cantidad);
+			writeln(tablacolores[i].codigo:5, ' | ', tablacolores[i].cantidad);
 	end;
 
 procedure I3(var Tablatamanos : TablaCtamanos);
@@ -133,8 +132,7 @@ procedure I3(var Tablatamanos : TablaCtamanos);
 	begin
 		writeln('Tamaño | Cantidad');
 		for i:= 'A' to 'Z' do
-			if tablatamanos[i].cantidad > 0 then
-				writeln(tablatamanos[i].codigo:6, ' | ', tablatamanos[i].cantidad);
+			writeln(tablatamanos[i].codigo:6, ' | ', tablatamanos[i].cantidad);
 	end;
 
 
@@ -182,12 +180,13 @@ Procedure I4 (var tablacolores : tablaCcolores);
 	var
 		i:byte;
 	begin
+		writeln('Color | Cantidad');
 		i:=1;
 		burbujeocolores(tablacolores, false);
 
 		while (tablacolores[i].cantidad = 0) and (i <= 254) do inc(i);
 		repeat
-			writeln(tablacolores[i].codigo,' ',tablacolores[i].cantidad);
+			writeln(tablacolores[i].codigo:5, ' | ', tablacolores[i].cantidad);
 			inc(i);
 		until (tablacolores[i].cantidad<>tablacolores[i-1].cantidad) or (i > 254);
 	end;
@@ -196,11 +195,12 @@ procedure I5(var Tablatamanos : TablaCtamanos);
 	var
 		I:char;
 	begin
+		writeln('Tamaño | Cantidad');
 		burbujeotamanos(tablatamanos, true);
-		writeln(tablatamanos['A'].codigo, ' ', tablatamanos['A'].cantidad);
+		writeln(tablatamanos['A'].codigo:6, ' | ', tablatamanos['A'].cantidad);
 		for I:='B' to 'Z' do
 			if tablatamanos[i].cantidad = tablatamanos['A'].cantidad then
-				writeln(tablatamanos[i].codigo,' ',tablatamanos[i].cantidad);
+				writeln(tablatamanos[i].codigo:6, ' | ', tablatamanos[i].cantidad);
 	end;
 var
 	Cobjetos : FTobjeto;
@@ -215,6 +215,10 @@ begin
 	assign(Cdepositos, DEPOTFILE);
 	assign(Cobjetos, OBJECTFILE);
 	cargarcantidades(Cobjetos, Ccolores, Ctamanos, Cdepositos, Tablacolores, Tablatamanos);
+	I2(Tablacolores);
+	I3(Tablatamanos);
+	I4(tablacolores);
+	I5(tablatamanos);
 	pause;
 end.
 

@@ -335,6 +335,7 @@ implementation
 	procedure seeTTdeposito(var archivo: FTdeposito; var tabla : TTdeposito);
 		var
 			reg : Tdeposito;
+			i : byte;
 		begin
 			writeln('Ingrese Codigo de deposito:');
 			readDcodigo(reg.codigo);
@@ -348,6 +349,9 @@ implementation
 						reg.ubicacion:LOCLEN, ' | ',
 						reg.color:5, ' | ', reg.tamano:6
 					);
+				writeln('Objeto | Cantidad');
+				for i := 1 to DEPOTSIZE do
+					writeln(reg.objetos[i].codigo[1],reg.objetos[i].codigo[2], '     | ', reg.objetos[i].cantidad);
 			end
 			else writeln('No existe');
 		end;

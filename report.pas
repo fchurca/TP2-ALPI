@@ -121,94 +121,88 @@ Procedure I2(var TablaCcolores : TablaCcolores);
 		var
 	i:byte;
 	begin
-
-	writeln('cod color','	cantidad');
-	For i:=1 to 254 do
-	writeln(tablaccolores[i].codigo,'	',tablaccolores[i].cantidad);
-
+		writeln('Color | Cantidad');
+		for i:=1 to 254 do
+			if tablaccolores[i].cantidad > 0 then
+				writeln(tablaccolores[i].codigo:5, ' | ', tablaccolores[i].cantidad);
 	end;
 
 procedure I3(var TablaCtamanos : TablaCtamanos);
 
 	var
-	i:char;
+	i : char;
 	begin
-	writeln('tamano	cantidad');
-	for i:='a' to 'z' do
-	writeln(tablaCtamanos[i].codigo,tablaCtamanos[i].cantidad);
+		writeln('Tamaño | Cantidad');
+		for i:= 'A' to 'Z' do
+			if tablaCtamanos[i].cantidad > 0 then
+				writeln(tablaCtamanos[i].codigo:6, ' | ', tablaCtamanos[i].cantidad);
 	end;
 
 
-procedure burbujeoCOlores(var A : TablaCcolores);
+procedure burbujeoCOlores(var A : TablaCcolores; ascending : boolean);
 	var
-	i,j:integer;
-	temp:TICC;
-	 tope:byte;
+		i, j : integer;
+		temp : TICC;
 
 	begin
-	 tope:=254;
-	for i:=2 to tope do
+		for i:=1 to 253 do
 		begin
-		for j:=1 to tope-1 do
-		begin
-		if A[j].cantidad > A[j+1].cantidad then
-		begin
-			 temp:=A[j];
-		 A[j]:=A[j+1];
-		 A[j+1]:=temp;
+			for j:=1 to 253 do
+			begin
+				if (A[j].cantidad > A[j+1].cantidad) xor ascending then
+				begin
+					temp := A[j];
+					A[j] := A[j+1];
+					A[j+1] := temp;
+				end;
+			end;
 		end;
-		end;
-		end;
-		end;
+	end;
 
-Procedure burbujeotamanos(var A : TablaCtamanos);
-
-var
-	i,j:char;
-	temp:TICT;
+procedure burbujeotamanos(var A : TablaCtamanos; ascending : boolean);
+	var
+		i, j : char;
+		temp:TICT;
 	begin
-	for i:='A' to 'Z' do
-		begin
-		for j:='B' to 'Y' do
-		begin
-		if A[j].cantidad < A[suc(j)].cantidad then
-		begin
-			 temp:=A[j];
-		 A[j]:=A[suc(j)];
-		 A[suc(j)]:=temp;
+		for i:='A' to 'Y' do
+			begin
+			for j:='A' to 'Y' do
+			begin
+				if (A[j].cantidad > A[suc(j)].cantidad) xor ascending then
+				begin
+					temp := A[j];
+					A[j] := A[suc(j)];
+					A[suc(j)] := temp;
+				end;
+			end;
 		end;
-		end;
-	 end;
-	 end;
+	end;
 //4. Para que color/es hay menos objetos.
 
 Procedure I4 (var tablaCcolores : tablaCcolores);
-var
-i:byte;
-begin
+	var
+		i:byte;
+	begin
 		i:=1;
-	burbujeocolores(tablaCcolores);
+		burbujeocolores(tablaCcolores, false);
 
-	while tablaCcolores[i].cantidad = 0 do
-	inc(i);
-	repeat
-	writeln(tablaCcolores[i].codigo,'	',tablaCcolores[i].cantidad);
-	inc(i);
-	until tablaCcolores[i].cantidad<>tablaccolores[i-1].cantidad;
-
+		while (tablaCcolores[i].cantidad = 0) and (i <= 254) do inc(i);
+		repeat
+			writeln(tablaCcolores[i].codigo,'	',tablaCcolores[i].cantidad);
+			inc(i);
+		until (tablaCcolores[i].cantidad<>tablaccolores[i-1].cantidad) or (i > 254);
 	end;
 //5. Para que tamano hay mas objetos
 procedure I5(var TablaCtamanos : TablaCtamanos);
-
 	var
-	I:char;
+		I:char;
 	begin
-	burbujeotamanos(tablaCtamanos);
-	for I:='A'to 'Z' do
-		writeln(tablaCtamanos[i].codigo,'	',tablactamanos[i].cantidad);
+		burbujeotamanos(tablaCtamanos, true);
+		writeln(tablaCtamanos['A'].codigo, ' ', tablactamanos['A'].cantidad);
+		for I:='B' to 'Z' do
+			if tablactamanos[i].cantidad = tablactamanos['A'].cantidad then
+				writeln(tablaCtamanos[i].codigo,' ',tablactamanos[i].cantidad);
 	end;
-
-
 var
 
 Ccolores:FTcolor;

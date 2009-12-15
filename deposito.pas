@@ -32,6 +32,7 @@ interface
 
 	function Dmenu(var parent : Rmenu) : boolean;
 
+	function gooddepositocode(codigo : Dcodigo) : boolean;
 	function goodFTdeposito(var archivo : FTdeposito) : boolean;
 
 	procedure loadFTdeposito (var archivo: FTdeposito; var regT: TTdeposito);
@@ -51,6 +52,13 @@ interface
 	procedure seeTTdeposito(var archivo: FTdeposito; var tabla : TTdeposito);
 
 implementation
+	function gooddepositocode(codigo : Dcodigo) : boolean;
+		begin
+			if (codigo[1] in ['A'..'Z']) and(codigo[2] in ['A'..'Z']) and (codigo[3] in ['A'..'Z']) then
+				gooddepositocode := true
+			else
+				gooddepositocode := false;
+		end;
 	function emptyFTdepositoresults(var archivo : FTdeposito) : boolean;
 		var
 			ret : boolean;

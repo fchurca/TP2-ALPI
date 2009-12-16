@@ -217,6 +217,44 @@ implementation
 				writeln(tablatamanos[i].codigo:6, ' | ', tablatamanos[i].cantidad);
 		end;
 
+	procedure P4(var Fdepositos : FTdeposito; var Tabladepositos : TTdeposito);
+		var
+			i,j,k:char;
+			v,u:byte;
+			o : Ocodigo;
+			D : Tdeposito;
+			encontrado:boolean;
+		begin
+			encontrado := false;
+			writeln('ingrese codigo de objeto :');
+			readocodigo(o);
+			if not goodFTdeposito(Fdepositos) then
+			 writeln(NO_FILE, PROMPT, DEPOTFILE)
+			else begin
+			 for i:='A' to 'Z' do
+			  for j:='A' to 'Z' do
+			   for k:='A' to 'Z' do
+			    if Tabladepositos[i][j][k].isactive then begin
+			     if filesize(Fdepositos) < Tabladepositos[i][j][k].pos then
+			      writeln('Archivo corrupto?')
+			     else begin
+			      seek(Fdepositos,Tabladepositos[i][j][k].pos);
+			      read(Fdepositos,D);
+			      for u:=1 to 30 do
+			       if (D.objetos[u].codigo[1]=o[1]) and (D.objetos[u].codigo[2]=o[2]) then
+			       begin
+			       	writeln('El objeto ',o,' se encuentra en el deposito ',i,j,k);
+			       	writeln('Cantidad almacenada: ', D.objetos[u].cantidad);
+			       	encontrado:=true;
+			       end;
+			      end;
+			    end;
+			 close(Fdepositos);
+			end;
+			if not encontrado then
+				writeln('Objeto no encontrado');
+		end;
+
 	procedure Imenu(var parent : Rmenu);
 		var
 			this : Rmenu;
@@ -248,6 +286,7 @@ implementation
 						'4' : I4(tablacolores);
 						'5' : I5(tablatamanos);
 						'6' : I6(Tablatamanos);
+						'O' : P4(Cdepositos, Tabladepositos);
 						'S' : ;
 					end;
 					if ans <> 'S' then pause;

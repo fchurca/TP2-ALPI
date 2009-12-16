@@ -314,20 +314,28 @@ implementation
 		var
 			i, j, k : char;
 			reg : Tdeposito;
-
+			c : longint;
+			l : byte;
 		begin
 		reset(archivo);
 		writeln;
-		writeln('Código|      Descripción     |            Ubicacion           | Color | Tamaño');
+		writeln('Código |      Descripción     |            Ubicacion           | Color | Tamaño | Cant');
 		for i:='A' to 'Z' do for j:='A' to 'Z' do for k:='A' to 'Z' do
 				if tabla[i,j,k].isactive then
 				begin
+					c := 0;
 					seek(archivo, (tabla[i,j,k].pos));
 					read(archivo,reg);
-					writeln(reg.codigo[1], reg.codigo[2], reg.codigo[3], '   | ',
+					for l := 1 to DEPOTSIZE do
+						if isalpha(reg.objetos[l].codigo[1])
+						and isalpha(reg.objetos[l].codigo[2]) then
+							inc(c, reg.objetos[l].cantidad);
+					
+					writeln(reg.codigo[1], reg.codigo[2], reg.codigo[3], '    | ',
 						reg.descripcion : DESCLEN, ' | ',
 						reg.ubicacion:LOCLEN, ' | ',
-						reg.color:5, ' | ', reg.tamano:6
+						reg.color:5, ' | ', reg.tamano:6, ' | ',
+						c
 					);
 				end;
 		end;
@@ -336,6 +344,7 @@ implementation
 		var
 			reg : Tdeposito;
 			i : byte;
+			c : longint;
 		begin
 			writeln('Ingrese Codigo de deposito:');
 			readDcodigo(reg.codigo);
@@ -343,15 +352,22 @@ implementation
 			begin
 				seek(archivo, (tabla[reg.codigo[1], reg.codigo[2], reg.codigo[3]].pos));
 				read(archivo,reg);
-				writeln('Código|      Descripción     |            Ubicacion           | Color | Tamaño');
-				writeln(reg.codigo[1], reg.codigo[2], reg.codigo[3], '   | ',
+				writeln('Código |      Descripción     |            Ubicacion           | Color | Tamaño');
+				writeln(reg.codigo[1], reg.codigo[2], reg.codigo[3], '    | ',
 						reg.descripcion : DESCLEN, ' | ',
 						reg.ubicacion:LOCLEN, ' | ',
 						reg.color:5, ' | ', reg.tamano:6
 					);
 				writeln('Objeto | Cantidad');
+				c := 0;
 				for i := 1 to DEPOTSIZE do
-					writeln(reg.objetos[i].codigo[1],reg.objetos[i].codigo[2], '     | ', reg.objetos[i].cantidad);
+					if isalpha(reg.objetos[i].codigo[1])
+					and isalpha(reg.objetos[i].codigo[2])
+					then begin
+						writeln(reg.objetos[i].codigo[1],reg.objetos[i].codigo[2], '     | ', reg.objetos[i].cantidad);
+						inc(c, reg.objetos[i].cantidad);
+					end;
+				writeln('Total: ', c);
 			end
 			else writeln('No existe');
 		end;

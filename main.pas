@@ -1,6 +1,6 @@
 program TP2;
 
-uses crt, info, menu, color, tamano, objeto, deposito, processing;
+uses crt, info, menu, color, tamano, objeto, deposito, processing, report;
 
 const
 	PROGNAME = 'TP2 Grupo 4';
@@ -30,7 +30,6 @@ procedure mainmenu;
 	var
 		this : Rmenu;
 		ans:char;
-		ret : boolean;
 	begin
 		initrootmenu(this, PROGNAME, 'Principal');
 		repeat
@@ -38,12 +37,11 @@ procedure mainmenu;
 			readln(ans);
 				ans := toupper(ans);
 			case	ans of
-				'M' : ret := modificar(this);
-				'A' : ret := actualizar;
-//				'I' : informar(archc);
-				'S': ret := true;
+				'M' : modificar(this);
+				'A' : actualizar;
+				'I' : Imenu(this);
 			end;
-		until (ans = 'S') or not ret;
+		until ans = 'S';
 	end;
 begin
 	clrscr;

@@ -24,6 +24,7 @@ implementation
 			Dpos, Opos : integer;
 			Objeto:Tobjeto;
 			y,m,d,w:word;
+			method : char;
 		begin
 			actualizar := false;
 			assign(Dfile, DEPOTFILE);
@@ -50,6 +51,11 @@ implementation
 			   if goodFTobjeto(Ofile) then begin
 			    loadFTobjeto(Ofile, Otabla);
 			    Opos := 0;
+			    writeln('Ordenar por tamaño o por color (t/c)?');
+			    repeat
+			     readln(method);
+			     method := toupper(method);
+			    until method in ['C', 'T'];
 			    while not eof(archivo) do begin
 			     read(archivo,c1);
 			     inc(Opos);
@@ -75,7 +81,9 @@ implementation
 			            while not (eof(Dfile) or found) do
 			            begin
 			             read(Dfile, depo);
-			             if depo.color = Objeto.color then found := true;
+			             if ((method = 'C') and (depo.color = Objeto.color))
+			             or ((method = 'T') and (toupper(depo.tamano) = toupper(Objeto.tamano)))
+			             then found := true;
 			            end;
 			            if found then
 			            begin
@@ -98,25 +106,29 @@ implementation
 			             if found then
 			             begin
 			              inc(depo.Objetos[i].cantidad, cantidad);
-writeln(depo.Objetos[i].codigo[1],depo.Objetos[i].codigo[2],',',depo.Objetos[i].cantidad);
 			              seek(Dfile, Dpos);
 			              write(Dfile,depo);
 			             end else writeln(errfile, SOpos + ': Demasiados objetos diferentes en el depósito con esas características');
 			            end else writeln(errfile, SOpos + ': No hay depósito con esas características');
 			           end else writeln(errfile, SOpos + ': Cantidad inválida: ' + auxstr);
-			          end else begin writeln(errfile, SOpos + ': Esperaba una cantidad después de' + c1 + c2);
+			          end else begin
+			           writeln(errfile, SOpos + ': Esperaba una cantidad después de' + c1 + c2);
 			           readln(archivo);
 			          end;
-			         end else begin writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
+			         end else begin
+			          writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
 			          readln(archivo);
 			         end;
-			        end else begin writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
+			        end else begin
+			         writeln(errfile, SOpos + ': No hay coma después de ' + c1 + c2);
 			         readln(archivo);
 			        end;
-			       end else begin writeln(errfile, SOpos + ': Objeto no existente: ' + c1 + c2);
+			       end else begin
+			        writeln(errfile, SOpos + ': Objeto no existente: ' + c1 + c2);
 			        readln(archivo);
 			       end;
-			      end else begin writeln(errfile, SOpos + ': Código inválido: ' + c1 + c2);
+			      end else begin
+			       writeln(errfile, SOpos + ': Código inválido: ' + c1 + c2);
 			       readln(archivo);
 			      end;
 			     end else begin

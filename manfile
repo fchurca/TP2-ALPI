@@ -81,4 +81,14 @@ v       Ver un tamaño
 i       Ver todos los tamaños
 s       Aplicar cambios y volver
 <>
+Informar
+Ejercicios del primer práctico:
+1       Cantidad de objetos por depósito
+2       Cantidad de objetos por color (todos)
+3       Cantidad de objetos por tamaño
+4       Para qué color/es hay menos objetos
+5       Para qué tamaño hay más objetos
+6       Cantidad de objetos por tamaño (de mayor a menor)
+s       Volver
+<>
 

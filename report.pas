@@ -219,23 +219,39 @@ implementation
 
 	procedure Imenu(var parent : Rmenu);
 		var
+			this : Rmenu;
+			ans : char;
 			Cobjetos : FTobjeto;
 			Ccolores : FTcolor;
 			Ctamanos : FTtamano;
 			Cdepositos : FTdeposito;
 			Tablacolores : TablaCcolores;
 			Tablatamanos : TablaCtamanos;
+			Tabladepositos : TTdeposito;
 		begin
+			initmenu(parent, this, 'Informar');
 			assign(Ccolores, COLOURFILE);
 			assign(Ctamanos, SIZEFILE);
 			assign(Cdepositos, DEPOTFILE);
 			assign(Cobjetos, OBJECTFILE);
-			cargarcantidades(Cobjetos, Ccolores, Ctamanos, Cdepositos, Tablacolores, Tablatamanos);
-			I2(Tablacolores);
-			I3(Tablatamanos);
-			I4(tablacolores);
-			I5(tablatamanos);
-			I6(Tablatamanos);
-			pause;
+			if goodFTdeposito(Cdepositos) then begin
+				loadFTdeposito(Cdepositos, Tabladepositos);
+				cargarcantidades(Cobjetos, Ccolores, Ctamanos, Cdepositos, Tablacolores, Tablatamanos);
+				repeat
+					vprompt(this);
+					readln(ans);
+					ans := toupper(ans);
+					case ans of
+						'1' : dumpTTdeposito(Cdepositos, Tabladepositos);
+						'2' : I2(Tablacolores);
+						'3' : I3(Tablatamanos);
+						'4' : I4(tablacolores);
+						'5' : I5(tablatamanos);
+						'6' : I6(Tablatamanos);
+						'S' : ;
+					end;
+					if ans <> 'S' then pause;
+				until ans = 'S';
+			end else writeln(NO_FILE, PROMPT, DEPOTFILE);
 		end;
 end.
